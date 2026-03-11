@@ -1,0 +1,8 @@
+streamlit==1.31.0
+pandas
+plotly
+sentence-transformers
+pypdf
+torch
+requests
+python-dotenv
