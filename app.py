@@ -32,8 +32,6 @@ def load_model():
 @st.cache_data
 def fetch_jobs_data():
     api_url = "https://www.findsgjobs.com/apis/job/searchable"
-    
-    # Standard Browser Headers to prevent the API from blocking Python
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "application/json"
@@ -47,25 +45,36 @@ def fetch_jobs_data():
     }
 
     try:
-        # verify=False can be used if you have SSL certificate issues, 
-        # but try with standard request first.
-        response = requests.get(api_url, headers=headers, timeout=8)
+        response = requests.get(api_url, headers=headers, timeout=10)
         response.raise_for_status()
-        raw_data = response.json()
+        raw_json = response.json()
+        
+        # --- FIXED DATA PARSING FOR FINDSGJOBS STRUCTURE ---
+        # Structure: raw_json -> 'data' (dict) -> 'result' (list)
+        source_data = []
+        if isinstance(raw_json, dict) and 'data' in raw_json:
+            inner_data = raw_json['data']
+            if isinstance(inner_data, dict) and 'result' in inner_data:
+                source_data = inner_data['result']
+        
+        if not source_data:
+            raise ValueError("Could not locate 'data -> result' list in API response")
+
+        # Now we slice the LIST
+        final_list = source_data[:50] 
         
         jobs_list = []
-        source_data = raw_data.get('data', raw_data) if isinstance(raw_data, dict) else raw_data
-        
-        # Safety check: if API returns empty list
-        if not source_data:
-            raise ValueError("API returned empty dataset")
-
-        for item in source_data[:50]:
-            role = item.get('job_title', item.get('title', 'Unknown Role'))
-            skills_text = item.get('skills', item.get('requirements', 'Details in description'))
-            desc = item.get('job_description', item.get('description', ''))
+        for item in final_list:
+            # Accessing the nested 'job' dictionary within each result item
+            job_info = item.get('job', {})
             
-            course_info = sctp_map["Analyst"]
+            role = job_info.get('Title', 'Unknown Role')
+            # Using 'keywords' or 'JobDescription' as the basis for AI matching
+            skills_text = job_info.get('keywords', 'Details in description')
+            desc = job_info.get('JobDescription', '')
+            
+            # Match to an SCTP course based on keywords in the title
+            course_info = sctp_map["Analyst"] # Default
             for key, val in sctp_map.items():
                 if key.lower() in str(role).lower():
                     course_info = val
@@ -78,18 +87,17 @@ def fetch_jobs_data():
                 "Course": course_info["Course"],
                 "Provider": course_info["Provider"]
             })
+            
         return pd.DataFrame(jobs_list), "API"
     
     except Exception as e:
-        # This will now print the specific error in your terminal to help you debug
-        print(f"DEBUG: API Error: {e}") 
-        
+        # Fallback dataset
         fallback_df = pd.DataFrame([
             {"Role": "Data Scientist", "Skills": "Python, ML, SQL", "Description": "AI Research", "Course": "SCTP: DS&AI", "Provider": "NTU"},
             {"Role": "AI Engineer", "Skills": "LLMs, Python, NLP", "Description": "GenAI Dev", "Course": "SCTP: AI Specialist", "Provider": "SUTD"},
             {"Role": "Data Analyst", "Skills": "Excel, SQL, Tableau", "Description": "Business Insights", "Course": "SCTP: Data Analytics", "Provider": "SIT"}
         ])
-        return fallback_df, f"Fallback (Error: {str(e)[:50]}...)"
+        return fallback_df, f"Fallback (Error: {str(e)})"
 
 # --- 3. INITIALIZATION ---
 with st.sidebar:
@@ -97,22 +105,20 @@ with st.sidebar:
     with st.status("Initializing AI & Data...", expanded=True) as status:
         st.write("Loading Transformer Model...")
         model = load_model()
-        
         st.write("Connecting to FindSGJobs API...")
         jobs_df, source_type = fetch_jobs_data()
         
-        if source_type == "API":
+        if "API" in source_type:
             st.success(f"Successfully pulled {len(jobs_df)} roles from Live API.")
         else:
-            st.warning("API Timeout/Error. Switched to Hardcoded Fallback Dataset.")
+            st.warning("API Switched to Fallback Mode.")
             
         status.update(label="System Ready!", state="complete", expanded=False)
 
-    # Detailed Data Source Info
     with st.expander("Data Connection Details"):
         st.write(f"**Data Source:** {source_type}")
         st.write(f"**API URL:** https://www.findsgjobs.com/apis/job/searchable")
-        if source_type == "API":
+        if "API" in source_type:
             st.write("🟢 Connection Stable")
         else:
             st.write("🔴 Using Offline Recovery Mode")
@@ -129,8 +135,7 @@ if nav == "Introduction":
     st.title("🎯 Bridging the Singapore Skill Gap")
     st.write("### The SCTP Capstone Project")
     
-    # Dynamic badge for data source
-    if source_type == "API":
+    if "API" in source_type:
         st.caption("🟢 Connected to Live FindSGJobs Feed")
     else:
         st.caption("🟡 Running on local fallback dataset")
@@ -186,6 +191,7 @@ visualization using Tableau and building predictive models."""
 
         if profile_text:
             with st.spinner("AI is calculating vector similarities..."):
+                # Using 'Description' which we mapped from 'JobDescription' in the API
                 job_strings = (jobs_df['Role'] + " " + jobs_df['Description']).tolist()
                 user_emb = model.encode(profile_text, convert_to_tensor=True)
                 job_embs = model.encode(job_strings, convert_to_tensor=True)
@@ -195,7 +201,7 @@ visualization using Tableau and building predictive models."""
                 results = jobs_df.sort_values(by="Score", ascending=False).head(3)
                 
             with c2:
-                st.subheader(f"Top Live Matches ({source_type} Data)")
+                st.subheader(f"Top Matches Found")
                 for _, row in results.iterrows():
                     with st.expander(f"⭐ {row['Role']} ({row['Score']}% Match)", expanded=True):
                         fig = go.Figure(go.Indicator(
@@ -221,7 +227,7 @@ visualization using Tableau and building predictive models."""
 elif nav == "Impact & Ethics":
     st.title("🛡️ Implementation & Data Ethics")
     st.markdown("""
-    * **Scalability:** Real-time API consumption demonstrated.
+    * **Scalability:** Real-time API consumption demonstrated via FindSGJobs endpoints.
     * **PDPA:** No persistent storage of PII (Personally Identifiable Information).
     * **Fairness:** Matching is based on semantic capability, reducing human bias in shortlisting.
     """)
