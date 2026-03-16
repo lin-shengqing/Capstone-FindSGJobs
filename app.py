@@ -129,6 +129,7 @@ nav = st.sidebar.radio("Navigation", ["Introduction", "AI Recommendation Engine"
 # --- 5. PAGES ---
 if nav == "Introduction":
     st.title("🎯 AI-Driven Job Recommendation & Skill Gap Analysis")
+    st.markdown("### Use the **🛠️ Project Controls** on the left menu to navigate.")
     # if is_live:
     #     st.caption("🟢 Connected to Live FindSGJobs Feed + Seed Catalog")
     # else:
@@ -148,7 +149,34 @@ if nav == "Introduction":
         * **Transparency:** Skill gap reporting provides actionable feedback.
         * **Privacy:** Vectorized matching ensures PII is never stored.
         """)
-        st.markdown("### Use the \"Project Controls\" on the left menu to navigate.")
+        st.title("Description")
+        st.markdown("""An SCTP participant might struggle to find a job due to **skill gaps** and **insufficient relevant experience**, high competition for roles, or a mismatch between their qualifications and employer needs. Other challenges include out-of-date application materials, poor interview performance, and a general lack of networking opportunities. Economic factors and the increasing demand for certain skills can also make it harder to find employment. 
+
+---
+
+## Skill and Experience Mismatches
+
+* **Skill Gaps:** Participants may not have the specific skills required for the jobs they are applying for.
+* **Lack of Experience:** Employers frequently cite a lack of relevant experience as a primary reason for being unable to fill positions, particularly for individuals with new or changing careers. 
+* **Qualification Mismatch:** Some roles may require a degree or specific certifications that participants, who may have NITEC or Diploma qualifications, don't possess. 
+
+---
+
+## Job Search and Application Issues
+
+* **Outdated Materials:** An outdated resume or cover letter can make a candidate seem unprepared and lead to missed opportunities. 
+* **Poor Interview Skills:** Ineffective communication or poor performance during job interviews can hinder a candidate's chances.
+* **Ineffective Strategies:** Relying only on job boards or a lack of a clear job search strategy can limit opportunities. 
+* **Competition:** A highly competitive job market can make it difficult for individuals to secure roles, especially with more people pursuing higher education. 
+
+---
+
+## External and Systemic Factors
+
+* **Economic Conditions:** Broader economic factors, such as increased demand for specific talent, can influence employment outcomes. 
+* **Networking:** A lack of professional contacts and internal referrals can disadvantage job seekers. 
+* **Unclear Expectations:** Confusing application processes or unclear job descriptions can make it difficult for candidates to understand what employers are looking for.
+                    """)
     # with col2:
     #     df_funnel = pd.DataFrame({'Stages': ["Total", "Match", "Ready", "Hired"], 'Count': [1000, 450, 120, 30]})
     #     fig = px.funnel(df_funnel, x='Count', y='Stages')
@@ -164,11 +192,11 @@ elif nav == "AI Recommendation Engine":
         user_input = st.text_area("Or Paste Experience Manually", height=250)
         run_btn = st.button("Analyze My Career Profile")
 
-        st.markdown("Example of job experience:")
-        st.markdown("""I am a highly motivated professional looking to transition into Data Science. 
-                        \nI have 3 years of experience in project management. 
-                        \nI am proficient in Excel and have recently completed a basic course in Python and SQL.
-                        \n I am interested in data visualization using Tableau and building predictive models.""")
+        st.markdown("### Example of job experience: ###")
+        st.markdown(""" I am a highly motivated professional looking to transition into Data Science and AI.  
+                    I have 13 years of experience in software development, Site Reliability Engineering .  
+                    I am proficient in ASP.NET Microsoft SQL and have recently completed a basic course in Python and Machine Learning.  
+                    I am also interested in Big Data and Machine Learning. """)
 
     if run_btn:
         profile_text = ""
