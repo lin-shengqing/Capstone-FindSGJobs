@@ -32,37 +32,26 @@ def load_model():
 
 @st.cache_data
 def fetch_jobs_data():
-    api_url = "https://www.findsgjobs.com/apis/job/searchable"
+    api_url = "https://www.findsgjobs.comsss/apis/job/searchable"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "application/json"
     }
 
-    sctp_map = {
-        "Data Scientist": {"Course": "SCTP: Advanced Data Science & AI", "Provider": "NTU PACE"},
-        "Analyst": {"Course": "SCTP: Data Analytics & BI", "Provider": "SIT / SUSS"},
-        "Engineer": {"Course": "SCTP: AI Engineering Specialist", "Provider": "SUTD Academy"},
-        "Cloud": {"Course": "SCTP: Cloud Infrastructure Engineering", "Provider": "NTU / TP"},
-        "Security": {"Course": "SCTP: Cybersecurity Defense", "Provider": "SUTD Academy"},
-        "Developer": {"Course": "SCTP: Full Stack Web Development", "Provider": "NTU PACE"},
-        "Consultant": {"Course": "SCTP: FinTech & Digital Banking", "Provider": "SMU Academy"},
-        "Financial": {"Course": "SCTP: FinTech & Digital Banking", "Provider": "SMU Academy"},
-        "Sales": {"Course": "SCTP: Digital Marketing & E-Commerce", "Provider": "SMU / NTU"},
-        "Marketing": {"Course": "SCTP: Digital Marketing & E-Commerce", "Provider": "SMU / NTU"},
-        "Supervisor": {"Course": "SCTP: Service Excellence & Operations", "Provider": "SUSS"},
-        "Manager": {"Course": "SCTP: Leadership & Business Management", "Provider": "SIM / SMU"},
-        "Attendant": {"Course": "SCTP: Service Operations & Logistics", "Provider": "TP / SIT"},
-        "Healthcare": {"Course": "SCTP: Healthcare Operations", "Provider": "SUSS"},
-        "Housekeeper": {"Course": "SCTP: Facilities & Hospitality Management", "Provider": "RP / SIT"}
-    }
+    try:
+        with open('sctp_courses.json', 'r') as f:
+            sctp_courses = json.load(f)
+    except Exception as e:
+        st.sidebar.error(f"Error loading sctp_courses.json: {e}")
+        sctp_courses = {} # Empty fallback
 
-    hardcoded_roles = []
+    prelaoded_roles = []
     try:
         if os.path.exists('roles.json'):
             with open('roles.json', 'r') as f:
-                hardcoded_roles = json.load(f)
+                prelaoded_roles = json.load(f)
     except Exception:
-        hardcoded_roles = []
+        prelaoded_roles = []
 
     api_jobs = []
     is_live = False
@@ -89,9 +78,9 @@ def fetch_jobs_data():
                 desc = job_info.get('JobDescription', '')
                 
                 course_info = {"Course": "SCTP: General Career Transition", "Provider": "SkillsFuture Singapore"}
-                for key in sorted(sctp_map.keys(), key=len, reverse=True):
+                for key in sorted(sctp_courses.keys(), key=len, reverse=True):
                     if key.lower() in str(role).lower():
-                        course_info = sctp_map[key]
+                        course_info = sctp_courses[key]
                         break
 
                 api_jobs.append({
@@ -102,8 +91,8 @@ def fetch_jobs_data():
         api_status_msg = str(e)
         is_live = False
 
-    combined_df = pd.DataFrame(api_jobs + hardcoded_roles)
-    return combined_df, is_live, api_status_msg, len(api_jobs), len(hardcoded_roles)
+    combined_df = pd.DataFrame(api_jobs + prelaoded_roles)
+    return combined_df, is_live, api_status_msg, len(api_jobs), len(prelaoded_roles)
 
 # --- 3. INITIALIZATION ---
 with st.sidebar:
@@ -162,6 +151,7 @@ if nav == "Introduction":
 elif nav == "AI Recommendation Engine":
     st.title("🚀 Live AI Matching Demo")
     c1, c2 = st.columns([1, 2])
+    
     example_resume = """I am a highly motivated professional looking to transition into Data Science. 
 I have 3 years of experience in project management. I am proficient in Excel and have 
 recently completed a basic course in Python and SQL. I am interested in data 
@@ -176,19 +166,39 @@ visualization using Tableau and building predictive models."""
     if run_btn:
         profile_text = ""
         if upload:
-            reader = PdfReader(upload)
-            for page in reader.pages:
-                profile_text += page.extract_text()
+            try:
+                reader = PdfReader(upload)
+                for page in reader.pages:
+                    profile_text += page.extract_text()
+            except Exception as e:
+                st.error(f"Error reading PDF: {e}")
         else:
             profile_text = user_input
 
         if profile_text:
-            with st.spinner("AI is calculating vector similarities..."):
-                job_strings = (jobs_df['Role'] + " " + jobs_df['Description']).tolist()
+            with st.spinner("AI is calculating weighted similarities..."):
+                # --- WEIGHTED LOGIC START ---
+                # We encode Titles and Skills separately to give them higher priority
                 user_emb = model.encode(profile_text, convert_to_tensor=True)
-                job_embs = model.encode(job_strings, convert_to_tensor=True)
-                scores = util.cos_sim(user_emb, job_embs)[0].tolist()
-                jobs_df['Score'] = [round(float(s) * 100, 1) for s in scores]
+                
+                # 1. Title Similarity (Weight: 50%)
+                title_embs = model.encode(jobs_df['Role'].tolist(), convert_to_tensor=True)
+                title_scores = util.cos_sim(user_emb, title_embs)[0]
+                
+                # 2. Skills Similarity (Weight: 30%)
+                skill_embs = model.encode(jobs_df['Skills'].tolist(), convert_to_tensor=True)
+                skill_scores = util.cos_sim(user_emb, skill_embs)[0]
+                
+                # 3. Description Similarity (Weight: 20%)
+                desc_embs = model.encode(jobs_df['Description'].tolist(), convert_to_tensor=True)
+                desc_scores = util.cos_sim(user_emb, desc_embs)[0]
+                
+                # Calculate Final Weighted Score
+                final_scores = (title_scores * 0.5) + (skill_scores * 0.3) + (desc_scores * 0.2)
+                
+                jobs_df['Score'] = [round(float(s) * 100, 1) for s in final_scores]
+                # --- WEIGHTED LOGIC END ---
+                
                 results = jobs_df.sort_values(by="Score", ascending=False).head(3)
                 
             with c2:
@@ -199,8 +209,10 @@ visualization using Tableau and building predictive models."""
                             gauge = {'axis': {'range': [0, 100]}, 'bar': {'color': "#1f77b4"}}))
                         fig.update_layout(height=180, margin=dict(l=10, r=10, t=10, b=10))
                         st.plotly_chart(fig, use_container_width=True)
+                        
                         req_skills = [s.strip().lower() for s in str(row['Skills']).split(",")]
                         missing = [s.upper() for s in req_skills if s not in profile_text.lower() and len(s) > 2]
+                        
                         if missing[:3]:
                             st.error(f"**Gaps:** {', '.join(missing[:3])}")
                             st.success(f"**Pathway:** {row['Course']} @ {row['Provider']}")

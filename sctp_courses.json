@@ -1,0 +1,17 @@
+{
+    "Data Scientist": {"Course": "SCTP: Advanced Data Science & AI", "Provider": "NTU PACE"},
+    "Analyst": {"Course": "SCTP: Data Analytics & Business Intelligence", "Provider": "SITLEARN / SUSS"},
+    "Engineer": {"Course": "SCTP: AI Engineering Specialist", "Provider": "SUTD Academy"},
+    "Cloud": {"Course": "SCTP: Cloud Support & DevOps", "Provider": "Temasek Polytechnic"},
+    "Security": {"Course": "SCTP: Cybersecurity Defense & Digital Forensics", "Provider": "SUTD / SIM"},
+    "Developer": {"Course": "SCTP: Full Stack Web Development", "Provider": "NTU PACE / SP PACE"},
+    "Consultant": {"Course": "SCTP: Digital Transformation Mastery", "Provider": "Republic Polytechnic"},
+    "Financial": {"Course": "SCTP: Digital Accountancy & Financial Professionals", "Provider": "SMU Academy / RP"},
+    "Sales": {"Course": "SCTP: Digital Sales & Customer Success", "Provider": "NUS SCALE"},
+    "Marketing": {"Course": "SCTP: Bionic Digital Marketer (AI-Enhanced)", "Provider": "NUS SCALE / SMU"},
+    "Sustainability": {"Course": "SCTP: Sustainability & Resilience Programme", "Provider": "NUS CDE / SMU Academy"},
+    "Supply Chain": {"Course": "SCTP: Digital Supply Chain & Operations", "Provider": "SITLEARN / SIMTech"},
+    "Healthcare": {"Course": "SCTP: Healthcare Administration & Operations", "Provider": "SUSS / NYP"},
+    "Manufacturing": {"Course": "SCTP: Industrial Automation & Robotics", "Provider": "A*STAR SIMTech"},
+    "Entrepreneur": {"Course": "SCTP: Startup Founder & Business Management", "Provider": "NUS Business School"}
+}

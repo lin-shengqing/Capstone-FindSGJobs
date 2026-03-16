@@ -2,36 +2,64 @@
     {
         "Role": "Junior Data Scientist",
         "Skills": "Python, Machine Learning, Statistics, SQL",
-        "Description": "Entry-level role building predictive models for retail analytics.",
+        "Description": "Entry-level role building predictive models for retail and consumer analytics.",
         "Course": "SCTP: Advanced Data Science & AI",
         "Provider": "NTU PACE"
     },
     {
         "Role": "Cyber Security Analyst",
-        "Skills": "Network Security, SIEM, Firewalls, Ethics",
-        "Description": "Monitor networks for security breaches and respond to incidents.",
-        "Course": "SCTP: Cybersecurity Defense",
+        "Skills": "Network Security, SIEM, Incident Response, Ethical Hacking",
+        "Description": "Monitor networks for security breaches and coordinate threat mitigation.",
+        "Course": "SCTP: Cybersecurity Defense & Digital Forensics",
         "Provider": "SUTD Academy"
     },
     {
-        "Role": "Cloud Solutions Architect",
-        "Skills": "AWS, Azure, Docker, Kubernetes, Linux",
-        "Description": "Design and deploy scalable cloud infrastructure.",
-        "Course": "SCTP: Cloud Infrastructure Engineering",
-        "Provider": "NTU / TP"
+        "Role": "Sustainability Executive",
+        "Skills": "ESG Reporting, Carbon Footprinting, Circular Economy, Green Finance",
+        "Description": "Help companies implement green initiatives and track sustainability metrics.",
+        "Course": "SCTP: Sustainability & Resilience Programme",
+        "Provider": "NUS CDE"
     },
     {
-        "Role": "Full Stack Web Developer",
-        "Skills": "React, Node.js, JavaScript, MongoDB, CSS",
-        "Description": "Build responsive web applications from front to back.",
-        "Course": "SCTP: Full Stack Web Development",
-        "Provider": "NTU PACE"
+        "Role": "Digital Supply Chain Analyst",
+        "Skills": "Inventory Planning, IoT, Tableau, Logistics Automation",
+        "Description": "Optimize logistics flows using data-driven insights and digital tools.",
+        "Course": "SCTP: Digital Supply Chain & Operations",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Cloud Support Engineer",
+        "Skills": "AWS/Azure, Linux, Docker, Shell Scripting",
+        "Description": "Maintain and troubleshoot cloud-native infrastructure for tech firms.",
+        "Course": "SCTP: Cloud Support & DevOps",
+        "Provider": "Temasek Polytechnic"
+    },
+    {
+        "Role": "Digital Marketing Specialist",
+        "Skills": "SEO/SEM, Content Strategy, AI Content Tools, Google Analytics",
+        "Description": "Drive growth through multi-channel digital campaigns and AI-driven automation.",
+        "Course": "SCTP: Bionic Digital Marketer (AI-Enhanced)",
+        "Provider": "NUS SCALE"
+    },
+    {
+        "Role": "Patient Service Associate",
+        "Skills": "Medical Administration, Customer Service, Electronic Health Records",
+        "Description": "Manage frontline operations and patient scheduling in healthcare settings.",
+        "Course": "SCTP: Healthcare Administration & Operations",
+        "Provider": "SUSS"
+    },
+    {
+        "Role": "Automation Engineer",
+        "Skills": "PLC Programming, Robotics, Industrial IoT, Smart Manufacturing",
+        "Description": "Design and maintain automated production lines for the electronics sector.",
+        "Course": "SCTP: Industrial Automation & Robotics",
+        "Provider": "A*STAR SIMTech"
     },
     {
         "Role": "FinTech Associate",
-        "Skills": "Blockchain, Python, Financial Analysis, Regulation",
-        "Description": "Working on digital payment systems and smart contracts.",
-        "Course": "SCTP: FinTech & Digital Banking",
+        "Skills": "Blockchain Basics, Financial Regulations, Digital Payments",
+        "Description": "Support the implementation of digital banking and payment solution projects.",
+        "Course": "SCTP: Digital Accountancy & Financial Professionals",
         "Provider": "SMU Academy"
     }
 ]
