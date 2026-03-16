@@ -1,0 +1,37 @@
+[
+    {
+        "Role": "Junior Data Scientist",
+        "Skills": "Python, Machine Learning, Statistics, SQL",
+        "Description": "Entry-level role building predictive models for retail analytics.",
+        "Course": "SCTP: Advanced Data Science & AI",
+        "Provider": "NTU PACE"
+    },
+    {
+        "Role": "Cyber Security Analyst",
+        "Skills": "Network Security, SIEM, Firewalls, Ethics",
+        "Description": "Monitor networks for security breaches and respond to incidents.",
+        "Course": "SCTP: Cybersecurity Defense",
+        "Provider": "SUTD Academy"
+    },
+    {
+        "Role": "Cloud Solutions Architect",
+        "Skills": "AWS, Azure, Docker, Kubernetes, Linux",
+        "Description": "Design and deploy scalable cloud infrastructure.",
+        "Course": "SCTP: Cloud Infrastructure Engineering",
+        "Provider": "NTU / TP"
+    },
+    {
+        "Role": "Full Stack Web Developer",
+        "Skills": "React, Node.js, JavaScript, MongoDB, CSS",
+        "Description": "Build responsive web applications from front to back.",
+        "Course": "SCTP: Full Stack Web Development",
+        "Provider": "NTU PACE"
+    },
+    {
+        "Role": "FinTech Associate",
+        "Skills": "Blockchain, Python, Financial Analysis, Regulation",
+        "Description": "Working on digital payment systems and smart contracts.",
+        "Course": "SCTP: FinTech & Digital Banking",
+        "Provider": "SMU Academy"
+    }
+]

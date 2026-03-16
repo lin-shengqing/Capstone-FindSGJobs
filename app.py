@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer, util
 import streamlit as st
+import json
 
 # --- 0. ENVIRONMENT SETUP ---
 load_dotenv()
@@ -37,30 +38,17 @@ def fetch_jobs_data():
         "Accept": "application/json"
     }
 
-    sctp_map = {
-        "Data Scientist": {"Course": "SCTP: Advanced Data Science & AI", "Provider": "NTU PACE"},
-        "Analyst": {"Course": "SCTP: Data Analytics & BI", "Provider": "SIT / SUSS"},
-        "Engineer": {"Course": "SCTP: AI Engineering Specialist", "Provider": "SUTD Academy"},
-        "Cloud": {"Course": "SCTP: Cloud Infrastructure Engineering", "Provider": "NTU / TP"},
-        "Security": {"Course": "SCTP: Cybersecurity Defense", "Provider": "SUTD Academy"},
-        "Developer": {"Course": "SCTP: Full Stack Web Development", "Provider": "NTU PACE"},
-        "Finance": {"Course": "SCTP: FinTech & Digital Banking", "Provider": "SMU Academy"}
-    }
+    # --- 1. LOAD HARDCODED ROLES FROM JSON FILE ---
+    hardcoded_roles = []
+    try:
+        with open('roles.json', 'r') as f:
+            hardcoded_roles = json.load(f)
+    except Exception as e:
+        st.sidebar.error(f"Error loading roles.json: {e}")
+        # Emergency minimal fallback if file is missing
+        hardcoded_roles = [{"Role": "System Admin", "Skills": "Linux", "Description": "IT Support", "Course": "SCTP: IT Support", "Provider": "TP"}]
 
-    # --- DIVERSE HARDCODED SEED DATA ---
-    hardcoded_roles = [
-        {"Role": "Junior Data Scientist", "Skills": "Python, Machine Learning, Statistics, SQL", "Description": "Entry-level role building predictive models for retail analytics.", "Course": sctp_map["Data Scientist"]["Course"], "Provider": sctp_map["Data Scientist"]["Provider"]},
-        {"Role": "Cyber Security Analyst", "Skills": "Network Security, SIEM, Firewalls, Ethics", "Description": "Monitor networks for security breaches and respond to incidents.", "Course": sctp_map["Security"]["Course"], "Provider": sctp_map["Security"]["Provider"]},
-        {"Role": "Cloud Solutions Architect", "Skills": "AWS, Azure, Docker, Kubernetes, Linux", "Description": "Design and deploy scalable cloud infrastructure.", "Course": sctp_map["Cloud"]["Course"], "Provider": sctp_map["Cloud"]["Provider"]},
-        {"Role": "Full Stack Web Developer", "Skills": "React, Node.js, JavaScript, MongoDB, CSS", "Description": "Build responsive web applications from front to back.", "Course": sctp_map["Developer"]["Course"], "Provider": sctp_map["Developer"]["Provider"]},
-        {"Role": "FinTech Associate", "Skills": "Blockchain, Python, Financial Analysis, Regulation", "Description": "Working on digital payment systems and smart contracts.", "Course": sctp_map["Finance"]["Course"], "Provider": sctp_map["Finance"]["Provider"]},
-        {"Role": "Business Intelligence Analyst", "Skills": "SQL, Tableau, Excel, Power BI", "Description": "Create dashboards and visualize business metrics.", "Course": sctp_map["Analyst"]["Course"], "Provider": sctp_map["Analyst"]["Provider"]},
-        {"Role": "MLOps Engineer", "Skills": "Python, Docker, Jenkins, MLflow", "Description": "Deploying and managing ML models in production environments.", "Course": sctp_map["Engineer"]["Course"], "Provider": sctp_map["Engineer"]["Provider"]},
-        {"Role": "UI/UX Designer", "Skills": "Figma, User Research, Prototyping, Adobe XD", "Description": "Design user-centric interfaces for mobile and web.", "Course": "SCTP: UX Design Specialization", "Provider": "TP / SIT"},
-        {"Role": "Digital Marketing Specialist", "Skills": "SEO, SEM, Google Analytics, Content Strategy", "Description": "Driving traffic and lead generation through digital channels.", "Course": "SCTP: Digital Marketing & E-Commerce", "Provider": "SMU / NTU"},
-        {"Role": "AI Research Assistant", "Skills": "PyTorch, NLP, Calculus, Python", "Description": "Assisting in cutting-edge AI and LLM research.", "Course": sctp_map["Engineer"]["Course"], "Provider": sctp_map["Engineer"]["Provider"]}
-    ]
-
+    # --- 2. FETCH LIVE API DATA ---
     api_jobs = []
     api_status_msg = "Online"
     is_live = False
@@ -78,24 +66,20 @@ def fetch_jobs_data():
         
         if source_data:
             is_live = True
+            # Mapping API fields to our internal format
             for item in source_data:
                 job_info = item.get('job', {})
                 role = job_info.get('Title', 'Unknown Role')
                 skills_text = job_info.get('keywords', 'Details in description')
                 desc = job_info.get('JobDescription', '')
                 
-                course_info = sctp_map["Analyst"]
-                for key, val in sctp_map.items():
-                    if key.lower() in str(role).lower():
-                        course_info = val
-                        break
-
+                # Logic to map API roles to SCTP (simplified)
                 api_jobs.append({
                     "Role": role,
                     "Skills": skills_text,
                     "Description": desc,
-                    "Course": course_info["Course"],
-                    "Provider": course_info["Provider"]
+                    "Course": "SCTP: Professional Transition Program", # Default for API
+                    "Provider": "Multiple Providers"
                 })
     except Exception as e:
         api_status_msg = f"Error: {str(e)[:50]}"
