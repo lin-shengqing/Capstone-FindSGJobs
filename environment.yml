@@ -1,4 +1,4 @@
-name: sctp_capstone
+name: capstone_findsgjobs
 channels:
   - conda-forge
   - defaults

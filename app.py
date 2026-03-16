@@ -41,8 +41,7 @@ def fetch_jobs_data():
     }
 
     try:
-        # Reduced timeout to 5s to prevent hanging
-        response = requests.get(api_url, timeout=5)
+        response = requests.get(api_url, timeout=60)
         response.raise_for_status()
         raw_data = response.json()
         
@@ -121,10 +120,24 @@ elif nav == "AI Recommendation Engine":
     st.title("🚀 Live AI Matching Demo")
     c1, c2 = st.columns([1, 2])
     
+    # Define the example text
+    example_resume = """I am a highly motivated professional looking to transition into Data Science. 
+I have 3 years of experience in project management. I am proficient in Excel and have 
+recently completed a basic course in Python and SQL. I am interested in data 
+visualization using Tableau and building predictive models."""
+
     with c1:
         st.subheader("Candidate Input")
         upload = st.file_uploader("Upload Resume (PDF)", type="pdf")
-        user_input = st.text_area("Or Paste Experience Manually", height=200)
+        
+        # Restored the 'value' parameter so the box isn't empty
+        user_input = st.text_area(
+            "Or Paste Experience Manually", 
+            value=example_resume, # This puts the text back!
+            height=250,
+            help="You can edit this text or paste your own resume content."
+        )
+        
         run_btn = st.button("Analyze My Career Profile")
 
     if run_btn:
