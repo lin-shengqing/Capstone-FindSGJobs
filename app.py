@@ -58,8 +58,7 @@ def fetch_jobs_data():
     api_status_msg = "Online"
 
     try:
-        # 5 second timeout to prevent the app from hanging if API is slow
-        response = requests.get(api_url, headers=headers, timeout=5)
+        response = requests.get(api_url, headers=headers, timeout=1)
         response.raise_for_status()
         raw_json = response.json()
         
@@ -97,71 +96,79 @@ def fetch_jobs_data():
 # --- 3. INITIALIZATION ---
 with st.sidebar:
     st.title("⚙️ System Status")
-    with st.status("Initializing AI & Data...", expanded=True) as status:
+    with st.status("Initializing AI & Data...", expanded=False) as status:
         st.write("Loading Transformer Model...")
         model = load_model()
-        st.write("Connecting to FindSGJobs API...")
+        st.write("Transformer Model \"all-MiniLM-L6-v2\" Loaded")
+
+        #st.write("Connecting to FindSGJobs API...")
         jobs_df, is_live, api_error, api_count, seed_count = fetch_jobs_data()
         
-        if is_live:
-            st.success(f"Successfully pulled {api_count} roles from Live API.")
-            status.update(label="Live Connection Active!", state="complete", expanded=False)
-        else:
-            st.warning("API Switched to Fallback Mode.")
-            status.update(label="Offline Mode Active", state="error", expanded=True)
+        # if is_live:
+        #     st.success(f"Successfully pulled {api_count} roles from Live API.")
+        #     status.update(label="Live Connection Active!", state="complete", expanded=False)
+        # else:
+        #     st.warning("API Switched to Fallback Mode.")
+        #     status.update(label="Offline Mode Active", state="error", expanded=True)
 
-    with st.expander("📊 Data Breakdown", expanded=True):
+    with st.expander("📊 Data Breakdown", expanded=False):
         st.write(f"**Total Roles Loaded:** {len(jobs_df)}")
-        st.write(f"**API Status:** {'🟢 Online' if is_live else '🔴 Offline'}")
-        if not is_live:
-            st.caption(f"Reason: {api_error}")
-        st.write(f"**Live API Roles:** {api_count}")
-        st.write(f"**Hardcoded Seed Roles:** {seed_count}")
+        # st.write(f"**API Status:** {'🟢 Online' if is_live else '🔴 Offline'}")
+        # if not is_live:
+        #     st.caption(f"Reason: {api_error}")
+        # st.write(f"**Live API Roles:** {api_count}")
+        # st.write(f"**Hardcoded Seed Roles:** {seed_count}")
 
     if not hf_token:
         st.warning("HF_TOKEN missing. Performance may be throttled.")
 
 # --- 4. NAVIGATION ---
 st.sidebar.title("🛠️ Project Controls")
-nav = st.sidebar.radio("Navigation", ["Introduction", "AI Recommendation Engine", "Impact & Ethics"])
+nav = st.sidebar.radio("Navigation", ["Introduction", "AI Recommendation Engine"])
 
 # --- 5. PAGES ---
 if nav == "Introduction":
-    st.title("🎯 Bridging the Singapore Skill Gap")
-    st.write("### The SCTP Capstone Project")
-    if is_live:
-        st.caption("🟢 Connected to Live FindSGJobs Feed + Seed Catalog")
-    else:
-        st.caption("🟡 Running on local fallback dataset only")
+    st.title("🎯 AI-Driven Job Recommendation & Skill Gap Analysis")
+    # if is_live:
+    #     st.caption("🟢 Connected to Live FindSGJobs Feed + Seed Catalog")
+    # else:
+    #     st.caption("🟡 Running on local fallback dataset only")
 
-    st.info(f"Loaded {len(jobs_df)} active roles for analysis.")
+    #st.info(f"Loaded {len(jobs_df)} active roles for analysis.")
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("""
         **System Features:**
-        * **Hybrid Ingestion:** Merging live API data with a diverse curated seed catalog.
-        * **Fault Tolerance:** Automatic fallback to local data if the API is unreachable.
+        * **Ingestion:** Loaded diverse curated seed catalog.
         * **Semantic Matching:** AI-driven understanding of candidate suitability.
+        * **Model:** Using sentence-transformers "all-MiniLM-L6-v2"
         """)
-    with col2:
-        df_funnel = pd.DataFrame({'Stages': ["Total", "Match", "Ready", "Hired"], 'Count': [1000, 450, 120, 30]})
-        fig = px.funnel(df_funnel, x='Count', y='Stages')
-        st.plotly_chart(fig, use_container_width=True)
+        st.title("🛡️ Implementation & Data Ethics")
+        st.markdown("""
+        * **Transparency:** Skill gap reporting provides actionable feedback.
+        * **Privacy:** Vectorized matching ensures PII is never stored.
+        """)
+        st.markdown("### Use the \"Project Controls\" on the left menu to navigate.")
+    # with col2:
+    #     df_funnel = pd.DataFrame({'Stages': ["Total", "Match", "Ready", "Hired"], 'Count': [1000, 450, 120, 30]})
+    #     fig = px.funnel(df_funnel, x='Count', y='Stages')
+    #     st.plotly_chart(fig, use_container_width=True)
 
 elif nav == "AI Recommendation Engine":
     st.title("🚀 Live AI Matching Demo")
     c1, c2 = st.columns([1, 2])
     
-    example_resume = """I am a highly motivated professional looking to transition into Data Science. 
-I have 3 years of experience in project management. I am proficient in Excel and have 
-recently completed a basic course in Python and SQL. I am interested in data 
-visualization using Tableau and building predictive models."""
-
     with c1:
         st.subheader("Candidate Input")
         upload = st.file_uploader("Upload Resume (PDF)", type="pdf")
-        user_input = st.text_area("Or Paste Experience Manually", value=example_resume, height=250)
+        user_input = st.text_area("Or Paste Experience Manually", height=250)
         run_btn = st.button("Analyze My Career Profile")
+
+        st.markdown("Example of job experience:")
+        st.markdown("""I am a highly motivated professional looking to transition into Data Science. 
+                        \nI have 3 years of experience in project management. 
+                        \nI am proficient in Excel and have recently completed a basic course in Python and SQL.
+                        \n I am interested in data visualization using Tableau and building predictive models.""")
 
     if run_btn:
         profile_text = ""
@@ -218,12 +225,3 @@ visualization using Tableau and building predictive models."""
                             st.success(f"**Pathway:** {row['Course']} @ {row['Provider']}")
                         else:
                             st.success("Your profile is a strong technical match!")
-
-elif nav == "Impact & Ethics":
-    st.title("🛡️ Implementation & Data Ethics")
-    st.markdown("""
-    * **Resilience:** Hybrid architecture ensures system availability.
-    * **Transparency:** Skill gap reporting provides actionable feedback.
-    * **Privacy:** Vectorized matching ensures PII is never stored.
-    """)
-    st.image("https://miro.medium.com/v2/resize:fit:1400/1*9HEn98S-0Z_0_KkAtf_v9A.png")
