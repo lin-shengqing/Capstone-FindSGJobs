@@ -32,7 +32,8 @@ def load_model():
 
 @st.cache_data
 def fetch_jobs_data():
-    api_url = "https://www.findsgjobs.comsss/apis/job/searchable"
+    #api_url = "https://www.findsgjobs.com/apis/job/searchable"
+    api_url = ""
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "application/json"
@@ -124,65 +125,11 @@ with st.sidebar:
 
 # --- 4. NAVIGATION ---
 st.sidebar.title("🛠️ Project Controls")
-nav = st.sidebar.radio("Navigation", ["Introduction", "AI Recommendation Engine"])
+nav = st.sidebar.radio("Navigation", ["AI Recommendation Engine", "Introduction"])
 
 # --- 5. PAGES ---
-if nav == "Introduction":
+if nav == "AI Recommendation Engine":
     st.title("🎯 AI-Driven Job Recommendation & Skill Gap Analysis")
-    st.markdown("### Use the **🛠️ Project Controls** on the left menu to navigate.")
-    # if is_live:
-    #     st.caption("🟢 Connected to Live FindSGJobs Feed + Seed Catalog")
-    # else:
-    #     st.caption("🟡 Running on local fallback dataset only")
-
-    #st.info(f"Loaded {len(jobs_df)} active roles for analysis.")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("""
-        **System Features:**
-        * **Ingestion:** Loaded diverse curated seed catalog.
-        * **Semantic Matching:** AI-driven understanding of candidate suitability.
-        * **Model:** Using sentence-transformers "all-MiniLM-L6-v2"
-        """)
-        st.title("🛡️ Implementation & Data Ethics")
-        st.markdown("""
-        * **Transparency:** Skill gap reporting provides actionable feedback.
-        * **Privacy:** Vectorized matching ensures PII is never stored.
-        """)
-        st.title("Description")
-        st.markdown("""An SCTP participant might struggle to find a job due to **skill gaps** and **insufficient relevant experience**, high competition for roles, or a mismatch between their qualifications and employer needs. Other challenges include out-of-date application materials, poor interview performance, and a general lack of networking opportunities. Economic factors and the increasing demand for certain skills can also make it harder to find employment. 
-
----
-
-## Skill and Experience Mismatches
-
-* **Skill Gaps:** Participants may not have the specific skills required for the jobs they are applying for.
-* **Lack of Experience:** Employers frequently cite a lack of relevant experience as a primary reason for being unable to fill positions, particularly for individuals with new or changing careers. 
-* **Qualification Mismatch:** Some roles may require a degree or specific certifications that participants, who may have NITEC or Diploma qualifications, don't possess. 
-
----
-
-## Job Search and Application Issues
-
-* **Outdated Materials:** An outdated resume or cover letter can make a candidate seem unprepared and lead to missed opportunities. 
-* **Poor Interview Skills:** Ineffective communication or poor performance during job interviews can hinder a candidate's chances.
-* **Ineffective Strategies:** Relying only on job boards or a lack of a clear job search strategy can limit opportunities. 
-* **Competition:** A highly competitive job market can make it difficult for individuals to secure roles, especially with more people pursuing higher education. 
-
----
-
-## External and Systemic Factors
-
-* **Economic Conditions:** Broader economic factors, such as increased demand for specific talent, can influence employment outcomes. 
-* **Networking:** A lack of professional contacts and internal referrals can disadvantage job seekers. 
-* **Unclear Expectations:** Confusing application processes or unclear job descriptions can make it difficult for candidates to understand what employers are looking for.
-                    """)
-    # with col2:
-    #     df_funnel = pd.DataFrame({'Stages': ["Total", "Match", "Ready", "Hired"], 'Count': [1000, 450, 120, 30]})
-    #     fig = px.funnel(df_funnel, x='Count', y='Stages')
-    #     st.plotly_chart(fig, use_container_width=True)
-
-elif nav == "AI Recommendation Engine":
     st.title("🚀 Live AI Matching Demo")
     c1, c2 = st.columns([1, 2])
     
@@ -256,3 +203,54 @@ elif nav == "AI Recommendation Engine":
                             st.success(f"**Pathway:** {row['Course']} @ {row['Provider']}")
                         else:
                             st.success("Your profile is a strong technical match!")
+
+elif nav == "Introduction":
+    st.title("🎯 AI-Driven Job Recommendation & Skill Gap Analysis")
+    st.markdown("### Use the **🛠️ Project Controls** on the left menu to navigate.")
+    # if is_live:
+    #     st.caption("🟢 Connected to Live FindSGJobs Feed + Seed Catalog")
+    # else:
+    #     st.caption("🟡 Running on local fallback dataset only")
+
+    #st.info(f"Loaded {len(jobs_df)} active roles for analysis.")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("""
+        **System Features:**
+        * **Ingestion:** Loaded diverse curated seed catalog.
+        * **Semantic Matching:** AI-driven understanding of candidate suitability.
+        * **Model:** Using sentence-transformers "all-MiniLM-L6-v2"
+        """)
+        st.title("🛡️ Implementation & Data Ethics")
+        st.markdown("""
+        * **Transparency:** Skill gap reporting provides actionable feedback.
+        * **Privacy:** Vectorized matching ensures PII is never stored.
+        """)
+        st.title("Description")
+        st.markdown("""An SCTP participant might struggle to find a job due to **skill gaps** and **insufficient relevant experience**, high competition for roles, or a mismatch between their qualifications and employer needs. Other challenges include out-of-date application materials, poor interview performance, and a general lack of networking opportunities. Economic factors and the increasing demand for certain skills can also make it harder to find employment. 
+
+---
+
+## Skill and Experience Mismatches
+
+* **Skill Gaps:** Participants may not have the specific skills required for the jobs they are applying for.
+* **Lack of Experience:** Employers frequently cite a lack of relevant experience as a primary reason for being unable to fill positions, particularly for individuals with new or changing careers. 
+* **Qualification Mismatch:** Some roles may require a degree or specific certifications that participants, who may have NITEC or Diploma qualifications, don't possess. 
+
+---
+
+## Job Search and Application Issues
+
+* **Outdated Materials:** An outdated resume or cover letter can make a candidate seem unprepared and lead to missed opportunities. 
+* **Poor Interview Skills:** Ineffective communication or poor performance during job interviews can hinder a candidate's chances.
+* **Ineffective Strategies:** Relying only on job boards or a lack of a clear job search strategy can limit opportunities. 
+* **Competition:** A highly competitive job market can make it difficult for individuals to secure roles, especially with more people pursuing higher education. 
+
+---
+
+## External and Systemic Factors
+
+* **Economic Conditions:** Broader economic factors, such as increased demand for specific talent, can influence employment outcomes. 
+* **Networking:** A lack of professional contacts and internal referrals can disadvantage job seekers. 
+* **Unclear Expectations:** Confusing application processes or unclear job descriptions can make it difficult for candidates to understand what employers are looking for.
+                    """)
