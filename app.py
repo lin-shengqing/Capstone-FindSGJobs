@@ -125,11 +125,11 @@ with st.sidebar:
 
 # --- 4. NAVIGATION ---
 st.sidebar.title("🛠️ Project Controls")
-nav = st.sidebar.radio("Navigation", ["AI Recommendation Engine", "Introduction"])
+nav = st.sidebar.radio("Navigation", ["AI Recommendation Engine", "Project Description"])
 
 # --- 5. PAGES ---
 if nav == "AI Recommendation Engine":
-    st.title("🎯 AI-Driven Job Recommendation & Skill Gap Analysis")
+    st.title("🎯 AI-Driven Job Recommendation & SCTP Skill Gap Analyzer")
     st.title("🚀 Live AI Matching Demo")
     c1, c2 = st.columns([1, 2])
     
@@ -204,8 +204,8 @@ if nav == "AI Recommendation Engine":
                         else:
                             st.success("Your profile is a strong technical match!")
 
-elif nav == "Introduction":
-    st.title("🎯 AI-Driven Job Recommendation & Skill Gap Analysis")
+elif nav == "Project Description":
+    st.title("🎯 AI-Driven Job Recommendation & SCTP Skill Gap Analyzer")
     st.markdown("### Use the **🛠️ Project Controls** on the left menu to navigate.")
     # if is_live:
     #     st.caption("🟢 Connected to Live FindSGJobs Feed + Seed Catalog")
