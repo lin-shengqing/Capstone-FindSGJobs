@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 import pandas as pd
 import plotly.express as px
@@ -7,7 +8,6 @@ from dotenv import load_dotenv
 from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer, util
 import streamlit as st
-import json
 
 # --- 0. ENVIRONMENT SETUP ---
 load_dotenv()
@@ -38,23 +38,39 @@ def fetch_jobs_data():
         "Accept": "application/json"
     }
 
-    # --- 1. LOAD HARDCODED ROLES FROM JSON FILE ---
+    sctp_map = {
+        "Data Scientist": {"Course": "SCTP: Advanced Data Science & AI", "Provider": "NTU PACE"},
+        "Analyst": {"Course": "SCTP: Data Analytics & BI", "Provider": "SIT / SUSS"},
+        "Engineer": {"Course": "SCTP: AI Engineering Specialist", "Provider": "SUTD Academy"},
+        "Cloud": {"Course": "SCTP: Cloud Infrastructure Engineering", "Provider": "NTU / TP"},
+        "Security": {"Course": "SCTP: Cybersecurity Defense", "Provider": "SUTD Academy"},
+        "Developer": {"Course": "SCTP: Full Stack Web Development", "Provider": "NTU PACE"},
+        "Consultant": {"Course": "SCTP: FinTech & Digital Banking", "Provider": "SMU Academy"},
+        "Financial": {"Course": "SCTP: FinTech & Digital Banking", "Provider": "SMU Academy"},
+        "Sales": {"Course": "SCTP: Digital Marketing & E-Commerce", "Provider": "SMU / NTU"},
+        "Marketing": {"Course": "SCTP: Digital Marketing & E-Commerce", "Provider": "SMU / NTU"},
+        "Supervisor": {"Course": "SCTP: Service Excellence & Operations", "Provider": "SUSS"},
+        "Manager": {"Course": "SCTP: Leadership & Business Management", "Provider": "SIM / SMU"},
+        "Attendant": {"Course": "SCTP: Service Operations & Logistics", "Provider": "TP / SIT"},
+        "Healthcare": {"Course": "SCTP: Healthcare Operations", "Provider": "SUSS"},
+        "Housekeeper": {"Course": "SCTP: Facilities & Hospitality Management", "Provider": "RP / SIT"}
+    }
+
     hardcoded_roles = []
     try:
-        with open('roles.json', 'r') as f:
-            hardcoded_roles = json.load(f)
-    except Exception as e:
-        st.sidebar.error(f"Error loading roles.json: {e}")
-        # Emergency minimal fallback if file is missing
-        hardcoded_roles = [{"Role": "System Admin", "Skills": "Linux", "Description": "IT Support", "Course": "SCTP: IT Support", "Provider": "TP"}]
+        if os.path.exists('roles.json'):
+            with open('roles.json', 'r') as f:
+                hardcoded_roles = json.load(f)
+    except Exception:
+        hardcoded_roles = []
 
-    # --- 2. FETCH LIVE API DATA ---
     api_jobs = []
-    api_status_msg = "Online"
     is_live = False
-    
+    api_status_msg = "Online"
+
     try:
-        response = requests.get(api_url, headers=headers, timeout=10)
+        # 5 second timeout to prevent the app from hanging if API is slow
+        response = requests.get(api_url, headers=headers, timeout=5)
         response.raise_for_status()
         raw_json = response.json()
         
@@ -66,35 +82,36 @@ def fetch_jobs_data():
         
         if source_data:
             is_live = True
-            # Mapping API fields to our internal format
             for item in source_data:
                 job_info = item.get('job', {})
                 role = job_info.get('Title', 'Unknown Role')
                 skills_text = job_info.get('keywords', 'Details in description')
                 desc = job_info.get('JobDescription', '')
                 
-                # Logic to map API roles to SCTP (simplified)
+                course_info = {"Course": "SCTP: General Career Transition", "Provider": "SkillsFuture Singapore"}
+                for key in sorted(sctp_map.keys(), key=len, reverse=True):
+                    if key.lower() in str(role).lower():
+                        course_info = sctp_map[key]
+                        break
+
                 api_jobs.append({
-                    "Role": role,
-                    "Skills": skills_text,
-                    "Description": desc,
-                    "Course": "SCTP: Professional Transition Program", # Default for API
-                    "Provider": "Multiple Providers"
+                    "Role": role, "Skills": skills_text, "Description": desc,
+                    "Course": course_info["Course"], "Provider": course_info["Provider"]
                 })
     except Exception as e:
-        api_status_msg = f"Error: {str(e)[:50]}"
+        api_status_msg = str(e)
         is_live = False
 
     combined_df = pd.DataFrame(api_jobs + hardcoded_roles)
     return combined_df, is_live, api_status_msg, len(api_jobs), len(hardcoded_roles)
 
-# --- 3. SYSTEM INITIALIZATION ---
+# --- 3. INITIALIZATION ---
 with st.sidebar:
     st.title("⚙️ System Status")
     with st.status("Initializing AI & Data...", expanded=True) as status:
         st.write("Loading Transformer Model...")
         model = load_model()
-        st.write("Fetching Hybrid Job Feed...")
+        st.write("Connecting to FindSGJobs API...")
         jobs_df, is_live, api_error, api_count, seed_count = fetch_jobs_data()
         
         if is_live:
@@ -123,34 +140,28 @@ nav = st.sidebar.radio("Navigation", ["Introduction", "AI Recommendation Engine"
 if nav == "Introduction":
     st.title("🎯 Bridging the Singapore Skill Gap")
     st.write("### The SCTP Capstone Project")
-    
     if is_live:
         st.caption("🟢 Connected to Live FindSGJobs Feed + Seed Catalog")
     else:
         st.caption("🟡 Running on local fallback dataset only")
 
     st.info(f"Loaded {len(jobs_df)} active roles for analysis.")
-    
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("""
         **System Features:**
         * **Hybrid Ingestion:** Merging live API data with a diverse curated seed catalog.
         * **Fault Tolerance:** Automatic fallback to local data if the API is unreachable.
-        * **Semantic Matching:** NLP-driven understanding of candidate suitability.
+        * **Semantic Matching:** AI-driven understanding of candidate suitability.
         """)
     with col2:
-        df_funnel = pd.DataFrame({
-            'Stages': ["Total Applicants", "Skills Match", "Interview Ready", "Hired"],
-            'Count': [1000, 450, 120, 30]
-        })
+        df_funnel = pd.DataFrame({'Stages': ["Total", "Match", "Ready", "Hired"], 'Count': [1000, 450, 120, 30]})
         fig = px.funnel(df_funnel, x='Count', y='Stages')
         st.plotly_chart(fig, use_container_width=True)
 
 elif nav == "AI Recommendation Engine":
     st.title("🚀 Live AI Matching Demo")
     c1, c2 = st.columns([1, 2])
-    
     example_resume = """I am a highly motivated professional looking to transition into Data Science. 
 I have 3 years of experience in project management. I am proficient in Excel and have 
 recently completed a basic course in Python and SQL. I am interested in data 
@@ -176,7 +187,6 @@ visualization using Tableau and building predictive models."""
                 job_strings = (jobs_df['Role'] + " " + jobs_df['Description']).tolist()
                 user_emb = model.encode(profile_text, convert_to_tensor=True)
                 job_embs = model.encode(job_strings, convert_to_tensor=True)
-                
                 scores = util.cos_sim(user_emb, job_embs)[0].tolist()
                 jobs_df['Score'] = [round(float(s) * 100, 1) for s in scores]
                 results = jobs_df.sort_values(by="Score", ascending=False).head(3)
@@ -185,31 +195,23 @@ visualization using Tableau and building predictive models."""
                 st.subheader(f"Top Matches Found")
                 for _, row in results.iterrows():
                     with st.expander(f"⭐ {row['Role']} ({row['Score']}% Match)", expanded=True):
-                        fig = go.Figure(go.Indicator(
-                            mode = "gauge+number",
-                            value = row['Score'],
-                            gauge = {'axis': {'range': [0, 100]}, 'bar': {'color': "#1f77b4"}},
-                            domain = {'x': [0, 1], 'y': [0, 1]}
-                        ))
+                        fig = go.Figure(go.Indicator(mode = "gauge+number", value = row['Score'],
+                            gauge = {'axis': {'range': [0, 100]}, 'bar': {'color': "#1f77b4"}}))
                         fig.update_layout(height=180, margin=dict(l=10, r=10, t=10, b=10))
                         st.plotly_chart(fig, use_container_width=True)
-                        
                         req_skills = [s.strip().lower() for s in str(row['Skills']).split(",")]
                         missing = [s.upper() for s in req_skills if s not in profile_text.lower() and len(s) > 2]
-                        
                         if missing[:3]:
                             st.error(f"**Gaps:** {', '.join(missing[:3])}")
                             st.success(f"**Pathway:** {row['Course']} @ {row['Provider']}")
                         else:
                             st.success("Your profile is a strong technical match!")
-        else:
-            st.warning("Please provide a resume or profile text.")
 
 elif nav == "Impact & Ethics":
     st.title("🛡️ Implementation & Data Ethics")
     st.markdown("""
-    * **Resilience:** Demonstrated hybrid architecture ensures system availability.
-    * **Transparency:** Skill gap reporting provides actionable feedback to the user.
-    * **Privacy:** Vectorized matching ensures PII is never stored or transmitted.
+    * **Resilience:** Hybrid architecture ensures system availability.
+    * **Transparency:** Skill gap reporting provides actionable feedback.
+    * **Privacy:** Vectorized matching ensures PII is never stored.
     """)
-    st.image("https://miro.medium.com/v2/resize:fit:1400/1*9HEn98S-0Z_0_KkAtf_v9A.png", caption="AI Vector Space Mapping")
+    st.image("https://miro.medium.com/v2/resize:fit:1400/1*9HEn98S-0Z_0_KkAtf_v9A.png")
