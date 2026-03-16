@@ -6,3 +6,4 @@ pypdf
 torch
 requests
 python-dotenv
+faiss-cpu

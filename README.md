@@ -13,33 +13,43 @@ Singaporean job seekers, especially mid-career professionals, often face:
 
 ---
 
-## 🧠 Technical Methodology
+## 🧠 Technical Methodology (RAG Pipeline)
 
-### 1. Semantic Vector Search
-Unlike keyword matching, this tool utilizes the **`all-MiniLM-L6-v2`** Sentence-Transformer model. It converts resume text and job descriptions into high-dimensional vectors, measuring the **Cosine Similarity** between them to understand intent and context.
+The system operates as a full **Retrieval-Augmented Generation (RAG)** pipeline, moving beyond simple keyword matching to provide semantic understanding and personalized AI generation.
 
-### 2. Weighted Similarity Scoring
-To ensure high precision, the recommendation engine employs a weighted ranking algorithm:
+### 1. Vector Store & Semantic Retrieval
+Instead of keyword matching, this tool utilizes the **`all-MiniLM-L6-v2`** Sentence-Transformer model. At startup, it converts all curated job requirements into high-dimensional vectors and stores them in a **FAISS (Facebook AI Similarity Search)** index. When a candidate uploads a resume, the system queries this FAISS index to retrieve the most semantically relevant roles via Inner-Product (Cosine Similarity).
+
+### 2. Weighted Similarity Re-Scoring
+To ensure high precision on the retrieved candidates, the engine applies a weighted ranking algorithm:
 * **Job Title (50%):** Prioritizes the candidate's career direction.
 * **Technical Skills (30%):** Matches specific tools (Python, SQL, etc.).
 * **Job Description (20%):** Captures broad professional context.
 
 ### 3. Score Calibration (UX Optimization)
-Raw semantic similarity coefficients typically fall between 0.3 and 0.5. The app applies a **linear calibration layer** to map these raw scores to a 0–100% human-legible scale, ensuring the "Match Percentage" aligns with user expectations while maintaining ranking integrity.
+Raw semantic similarity coefficients typically fall between 0.3 and 0.5. The app applies a **linear calibration layer** to map these raw scores to a 0–100% human-legible scale, ensuring the "Match Percentage" aligns with user expectations.
 
-### 4. Data Ingestion
-The system architecture is decoupled for resilience:
-* **Seed Database:** Utilizes a custom `roles.json` containing 100+ diverse industry roles to ensure high-quality recommendations even when offline. 
-* **Course Database:** Utilizes a custom `sctp_course.json` containing 20+ diverse SCTP courses to fill up the skill gaps and insufficient relevant experience. 
+### 4. LLM Generation Layer (AI Career Advisor)
+Once the top matches and skill gaps are identified, the system constructs a context-rich prompt and calls the **Hugging Face Inference Providers API** (`huggingface_hub`). A generative Large Language Model analyzes the candidate's specific background against the retrieved job requirements and streams back personalized, actionable career transition advice.
+
+**Model Selection:**
+The system uses a dynamic fallback array of open-weight LLMs hosted on Hugging Face's free Serverless Inference API to ensure stability and high reasoning quality:
+1. **`meta-llama/Llama-3.1-8B-Instruct`** (Primary): Highly capable, fast, and excellent at following complex system prompts.
+2. **`Qwen/Qwen2.5-72B-Instruct`** (Fallback 1): A massive, exceptionally powerful model that rivals proprietary models in reasoning.
+3. **`mistralai/Mistral-Nemo-Instruct-2407`** (Fallback 2): A highly efficient 12B parameter model built jointly by Mistral and Nvidia.
+
+### 5. Data Ingestion
+* **Seed Database:** Utilizes a custom `roles.json` containing 100+ diverse industry roles.
+* **Course Database:** Utilizes `sctp_courses.json` containing SCTP courses to fulfill skill gaps. 
 
 ---
 
 ### 📁 File Structure
 
-* **app.py**: Core application logic, NLP pipeline, and Streamlit UI.
+* **app.py**: Core application logic, RAG pipeline, FAISS indexing, and Streamlit UI.
 * **roles.json**: Curated database of 100 diverse job roles and requirements.
 * **sctp_courses.json**: Mapping of job categories to actual SCTP course providers (NTU, SUTD, SIT, etc.).
-* **requirements.txt**: Python dependencies (Sentence-Transformers, PyPDF, Plotly).
+* **requirements.txt**: Python dependencies (Sentence-Transformers, PyPDF, FAISS, huggingface-hub).
 
 ---
 
