@@ -229,10 +229,13 @@ elif nav == "AI Recommendation Engine":
                 desc_scores = util.cos_sim(user_emb, desc_embs)[0]
                 
                 # Calculate Final Weighted Score
-                final_scores = (title_scores * 0.5) + (skill_scores * 0.3) + (desc_scores * 0.2)
+                raw_scores = (title_scores * 0.5) + (skill_scores * 0.3) + (desc_scores * 0.2)
+
+                # Formula: Normalized = (Score - Min) / (Max - Min) or simple multiplier
+                calibrated_scores = [min(float(s) * 2.2, 0.98) for s in raw_scores] 
                 
-                jobs_df['Score'] = [round(float(s) * 100, 1) for s in final_scores]
-                # --- WEIGHTED LOGIC END ---
+                jobs_df['Score'] = [round(s * 100, 1) for s in calibrated_scores]
+                # --- WEIGHTED LOGIC END ----
                 
                 results = jobs_df.sort_values(by="Score", ascending=False).head(3)
                 

@@ -1,65 +1,702 @@
 [
     {
         "Role": "Junior Data Scientist",
-        "Skills": "Python, Machine Learning, Statistics, SQL",
-        "Description": "Entry-level role building predictive models for retail and consumer analytics.",
+        "Skills": "Python, Machine Learning, SQL, Statistics",
+        "Description": "Building predictive models for consumer behavior analysis.",
         "Course": "SCTP: Advanced Data Science & AI",
         "Provider": "NTU PACE"
     },
     {
+        "Role": "AI Prompt Engineer",
+        "Skills": "Generative AI, NLP, Python, Creative Writing",
+        "Description": "Optimizing LLM outputs for corporate automation tasks.",
+        "Course": "SCTP: Advanced Data Science & AI",
+        "Provider": "NTU PACE"
+    },
+    {
+        "Role": "Machine Learning Ops (MLOps)",
+        "Skills": "Docker, Kubernetes, Python, CI/CD",
+        "Description": "Deploying and maintaining production-grade AI models.",
+        "Course": "SCTP: Advanced Data Science & AI",
+        "Provider": "NTU PACE"
+    },
+    {
+        "Role": "Data Analyst (Retail)",
+        "Skills": "Tableau, SQL, Excel, Data Visualization",
+        "Description": "Interpreting sales data to drive inventory decisions.",
+        "Course": "SCTP: Data Analytics & Business Intelligence",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Business Intelligence Analyst",
+        "Skills": "Power BI, SQL, ETL, Data Warehousing",
+        "Description": "Creating dashboards for executive leadership reporting.",
+        "Course": "SCTP: Data Analytics & Business Intelligence",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Marketing Data Analyst",
+        "Skills": "Google Analytics, SQL, Python, R",
+        "Description": "Analyzing campaign performance and customer acquisition costs.",
+        "Course": "SCTP: Data Analytics & Business Intelligence",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Healthcare Data Associate",
+        "Skills": "Health Informatics, SQL, Privacy Laws, Data Cleaning",
+        "Description": "Managing patient data trends for hospital efficiency.",
+        "Course": "SCTP: Data Analytics & Business Intelligence",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Supply Chain Analyst",
+        "Skills": "Predictive Modeling, SAP, Excel, Inventory Optimization",
+        "Description": "Using data to minimize logistics bottlenecks.",
+        "Course": "SCTP: Data Analytics & Business Intelligence",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Full Stack Developer",
+        "Skills": "React, Node.js, MongoDB, JavaScript",
+        "Description": "Developing end-to-end web applications for startups.",
+        "Course": "SCTP: Full Stack Web Development",
+        "Provider": "Singapore Polytechnic"
+    },
+    {
+        "Role": "Frontend Engineer",
+        "Skills": "HTML, CSS, Vue.js, TypeScript",
+        "Description": "Building responsive user interfaces for e-commerce platforms.",
+        "Course": "SCTP: Full Stack Web Development",
+        "Provider": "Singapore Polytechnic"
+    },
+    {
+        "Role": "Backend Developer",
+        "Skills": "Python, Java, SQL, REST APIs",
+        "Description": "Managing server-side logic and database integrations.",
+        "Course": "SCTP: Full Stack Web Development",
+        "Provider": "Singapore Polytechnic"
+    },
+    {
+        "Role": "Cloud Support Engineer",
+        "Skills": "AWS, Linux, Scripting, Networking",
+        "Description": "Providing technical support for cloud-hosted environments.",
+        "Course": "SCTP: Cloud Infrastructure & DevOps",
+        "Provider": "Temasek Polytechnic"
+    },
+    {
+        "Role": "Junior DevOps Engineer",
+        "Skills": "Terraform, Jenkins, Docker, Bash",
+        "Description": "Automating software deployment pipelines.",
+        "Course": "SCTP: Cloud Infrastructure & DevOps",
+        "Provider": "Temasek Polytechnic"
+    },
+    {
+        "Role": "Cloud Solutions Architect",
+        "Skills": "Azure, System Design, Security, Cost Optimization",
+        "Description": "Designing scalable cloud architectures for enterprises.",
+        "Course": "SCTP: Cloud Infrastructure & DevOps",
+        "Provider": "Temasek Polytechnic"
+    },
+    {
         "Role": "Cyber Security Analyst",
-        "Skills": "Network Security, SIEM, Incident Response, Ethical Hacking",
-        "Description": "Monitor networks for security breaches and coordinate threat mitigation.",
+        "Skills": "SIEM, Incident Response, Network Security",
+        "Description": "Monitoring systems for security breaches.",
         "Course": "SCTP: Cybersecurity Defense & Digital Forensics",
         "Provider": "SUTD Academy"
     },
     {
-        "Role": "Sustainability Executive",
-        "Skills": "ESG Reporting, Carbon Footprinting, Circular Economy, Green Finance",
-        "Description": "Help companies implement green initiatives and track sustainability metrics.",
-        "Course": "SCTP: Sustainability & Resilience Programme",
-        "Provider": "NUS CDE"
+        "Role": "Security Operations Center (SOC) Analyst",
+        "Skills": "Log Analysis, Wireshark, Threat Hunting",
+        "Description": "Real-time threat monitoring and alert triage.",
+        "Course": "SCTP: Cybersecurity Defense & Digital Forensics",
+        "Provider": "SUTD Academy"
     },
     {
-        "Role": "Digital Supply Chain Analyst",
-        "Skills": "Inventory Planning, IoT, Tableau, Logistics Automation",
-        "Description": "Optimize logistics flows using data-driven insights and digital tools.",
-        "Course": "SCTP: Digital Supply Chain & Operations",
+        "Role": "Penetration Tester (Junior)",
+        "Skills": "Metasploit, Python, OWASP, Linux",
+        "Description": "Identifying vulnerabilities through ethical hacking.",
+        "Course": "SCTP: Cybersecurity Defense & Digital Forensics",
+        "Provider": "SUTD Academy"
+    },
+    {
+        "Role": "Digital Forensics Investigator",
+        "Skills": "Evidence Collection, FTK, Chain of Custody",
+        "Description": "Investigating digital crimes and data breaches.",
+        "Course": "SCTP: Cybersecurity Defense & Digital Forensics",
+        "Provider": "SUTD Academy"
+    },
+    {
+        "Role": "Compliance & Cyber Risk Officer",
+        "Skills": "ISO 27001, PDPA, Risk Assessment",
+        "Description": "Ensuring organization adherence to data laws.",
+        "Course": "SCTP: Cybersecurity Defense & Digital Forensics",
+        "Provider": "SUTD Academy"
+    },
+    {
+        "Role": "Junior UI Designer",
+        "Skills": "Figma, Adobe XD, Typography, Color Theory",
+        "Description": "Creating visual assets for mobile and web apps.",
+        "Course": "SCTP: UX/UI Design Programme",
         "Provider": "SITLEARN"
     },
     {
-        "Role": "Cloud Support Engineer",
-        "Skills": "AWS/Azure, Linux, Docker, Shell Scripting",
-        "Description": "Maintain and troubleshoot cloud-native infrastructure for tech firms.",
-        "Course": "SCTP: Cloud Support & DevOps",
-        "Provider": "Temasek Polytechnic"
+        "Role": "UX Researcher",
+        "Skills": "User Interviews, Persona Building, Usability Testing",
+        "Description": "Gathering user insights to inform design decisions.",
+        "Course": "SCTP: UX/UI Design Programme",
+        "Provider": "SITLEARN"
     },
     {
-        "Role": "Digital Marketing Specialist",
-        "Skills": "SEO/SEM, Content Strategy, AI Content Tools, Google Analytics",
-        "Description": "Drive growth through multi-channel digital campaigns and AI-driven automation.",
+        "Role": "Interaction Designer",
+        "Skills": "Prototyping, Framer, Animation, Micro-interactions",
+        "Description": "Designing how users interact with digital products.",
+        "Course": "SCTP: UX/UI Design Programme",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Associate Product Manager",
+        "Skills": "Agile, Jira, Roadmap Planning, Stakeholder Mgmt",
+        "Description": "Managing feature backlogs for digital products.",
+        "Course": "SCTP: Digital Product Management",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Product Owner",
+        "Skills": "Scrum, Backlog Grooming, User Stories",
+        "Description": "Defining product requirements and vision.",
+        "Course": "SCTP: Digital Product Management",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Growth Product Manager",
+        "Skills": "A/B Testing, Funnel Analysis, Retention Strategy",
+        "Description": "Driving user acquisition through product experiments.",
+        "Course": "SCTP: Digital Product Management",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Digital Marketing Executive",
+        "Skills": "SEO, SEM, Social Media, Content Marketing",
+        "Description": "Executing multi-channel digital campaigns.",
         "Course": "SCTP: Bionic Digital Marketer (AI-Enhanced)",
         "Provider": "NUS SCALE"
     },
     {
+        "Role": "Performance Marketer",
+        "Skills": "Meta Ads, Google Ads, ROAS Tracking",
+        "Description": "Optimizing paid media spend for conversions.",
+        "Course": "SCTP: Bionic Digital Marketer (AI-Enhanced)",
+        "Provider": "NUS SCALE"
+    },
+    {
+        "Role": "Social Media Manager",
+        "Skills": "Community Mgmt, Analytics, Content Strategy",
+        "Description": "Building brand presence on TikTok, IG, and LinkedIn.",
+        "Course": "SCTP: Bionic Digital Marketer (AI-Enhanced)",
+        "Provider": "NUS SCALE"
+    },
+    {
+        "Role": "Content Strategist",
+        "Skills": "Copywriting, AI Content Tools, SEO",
+        "Description": "Developing high-impact content for digital platforms.",
+        "Course": "SCTP: Bionic Digital Marketer (AI-Enhanced)",
+        "Provider": "NUS SCALE"
+    },
+    {
+        "Role": "CRM Executive",
+        "Skills": "Salesforce, Email Automation, Lifecycle Marketing",
+        "Description": "Managing customer relationships and loyalty.",
+        "Course": "SCTP: Bionic Digital Marketer (AI-Enhanced)",
+        "Provider": "NUS SCALE"
+    },
+    {
+        "Role": "Sustainability Executive",
+        "Skills": "ESG Reporting, Carbon Accounting, LCA",
+        "Description": "Implementing green initiatives within corporations.",
+        "Course": "SCTP: Sustainability & Resilience Programme",
+        "Provider": "NUS CDE"
+    },
+    {
+        "Role": "Carbon Analyst",
+        "Skills": "Data Analysis, Emissions Tracking, Excel",
+        "Description": "Calculating corporate carbon footprints.",
+        "Course": "SCTP: Sustainability & Resilience Programme",
+        "Provider": "NUS CDE"
+    },
+    {
+        "Role": "Circular Economy Specialist",
+        "Skills": "Waste Mgmt, Material Science, Process Design",
+        "Description": "Designing zero-waste systems for manufacturing.",
+        "Course": "SCTP: Sustainability & Resilience Programme",
+        "Provider": "NUS CDE"
+    },
+    {
+        "Role": "ESG Consultant",
+        "Skills": "GRI Standards, GRI Reporting, Advisory",
+        "Description": "Advising SMEs on sustainability compliance.",
+        "Course": "SCTP: Sustainability & Resilience Programme",
+        "Provider": "NUS CDE"
+    },
+    {
+        "Role": "Sustainable Design Consultant",
+        "Skills": "Green Mark, LEED, BIM, Energy Modeling",
+        "Description": "Designing energy-efficient buildings in Singapore.",
+        "Course": "SCTP: Sustainable Design (Built Environment)",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "BIM Modeller",
+        "Skills": "Revit, ArchiCAD, Clash Detection",
+        "Description": "Building 3D digital twins for construction projects.",
+        "Course": "SCTP: Sustainable Design (Built Environment)",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "Green Building Auditor",
+        "Skills": "Energy Auditing, HVAC, Lighting Systems",
+        "Description": "Assessing building performance for certifications.",
+        "Course": "SCTP: Sustainable Design (Built Environment)",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "FinTech Analyst",
+        "Skills": "Blockchain, Python, Financial Regulations",
+        "Description": "Supporting digital banking project implementations.",
+        "Course": "SCTP: Digital Finance Project Management with AI",
+        "Provider": "NUS SCALE"
+    },
+    {
+        "Role": "Digital Payments Specialist",
+        "Skills": "SWIFT, API Banking, RegTech",
+        "Description": "Developing new payment gateways and cross-border solutions.",
+        "Course": "SCTP: Digital Finance Project Management with AI",
+        "Provider": "NUS SCALE"
+    },
+    {
+        "Role": "Crypto Compliance Officer",
+        "Skills": "AML, KYC, Blockchain Forensics",
+        "Description": "Ensuring regulatory compliance for digital assets.",
+        "Course": "SCTP: Digital Finance Project Management with AI",
+        "Provider": "NUS SCALE"
+    },
+    {
+        "Role": "Account Assistant (Digital)",
+        "Skills": "Xero, QuickBooks, SAP, Tax Prep",
+        "Description": "Managing automated bookkeeping for SMEs.",
+        "Course": "SCTP: Digital Accountancy & Financial Professionals",
+        "Provider": "Republic Polytechnic"
+    },
+    {
+        "Role": "Audit Assistant",
+        "Skills": "Data Auditing, Internal Controls, Risk Mgmt",
+        "Description": "Assisting in tech-enabled financial audits.",
+        "Course": "SCTP: Digital Accountancy & Financial Professionals",
+        "Provider": "Republic Polytechnic"
+    },
+    {
+        "Role": "Financial Operations Executive",
+        "Skills": "Accounts Payable, Receivable, Cash Flow Mgmt",
+        "Description": "Streamlining day-to-day financial transactions.",
+        "Course": "SCTP: Digital Accountancy & Financial Professionals",
+        "Provider": "Republic Polytechnic"
+    },
+    {
         "Role": "Patient Service Associate",
-        "Skills": "Medical Administration, Customer Service, Electronic Health Records",
-        "Description": "Manage frontline operations and patient scheduling in healthcare settings.",
-        "Course": "SCTP: Healthcare Administration & Operations",
-        "Provider": "SUSS"
+        "Skills": "Medical Admin, Customer Service, EHR",
+        "Description": "Managing frontline hospital operations.",
+        "Course": "SCTP: Certificate in Healthcare Administration",
+        "Provider": "SUSS Academy"
+    },
+    {
+        "Role": "Healthcare Operations Executive",
+        "Skills": "Resource Planning, Hospital Mgmt, WSH",
+        "Description": "Optimizing clinic workflows and staff scheduling.",
+        "Course": "SCTP: Certificate in Healthcare Administration",
+        "Provider": "SUSS Academy"
+    },
+    {
+        "Role": "Care Coordinator",
+        "Skills": "Case Management, Empathy, Community Care",
+        "Description": "Coordinating home-based care for the elderly.",
+        "Course": "SCTP: Certificate in Healthcare Administration",
+        "Provider": "SUSS Academy"
+    },
+    {
+        "Role": "Digital Supply Chain Planner",
+        "Skills": "Demand Forecasting, IoT, ERP Systems",
+        "Description": "Managing modern logistics and inventory flows.",
+        "Course": "SCTP: Digital Supply Chain & Operations",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Logistics Operations Executive",
+        "Skills": "Warehouse Mgmt, Freight Forwarding, Custom Laws",
+        "Description": "Overseeing physical movement of goods globally.",
+        "Course": "SCTP: Digital Supply Chain & Operations",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Last Mile Coordinator",
+        "Skills": "Route Optimization, Fleet Mgmt, Delivery Apps",
+        "Description": "Managing e-commerce delivery networks.",
+        "Course": "SCTP: Digital Supply Chain & Operations",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Robotics Technician",
+        "Skills": "PLC, Sensors, Mechanical Repair, Python",
+        "Description": "Maintaining automated production lines.",
+        "Course": "SCTP: Industrial Automation & Robotics",
+        "Provider": "SIMTech (A*STAR)"
     },
     {
         "Role": "Automation Engineer",
-        "Skills": "PLC Programming, Robotics, Industrial IoT, Smart Manufacturing",
-        "Description": "Design and maintain automated production lines for the electronics sector.",
+        "Skills": "Industrial IoT, Robotics, System Integration",
+        "Description": "Designing smart factory solutions.",
         "Course": "SCTP: Industrial Automation & Robotics",
-        "Provider": "A*STAR SIMTech"
+        "Provider": "SIMTech (A*STAR)"
     },
     {
-        "Role": "FinTech Associate",
-        "Skills": "Blockchain Basics, Financial Regulations, Digital Payments",
-        "Description": "Support the implementation of digital banking and payment solution projects.",
-        "Course": "SCTP: Digital Accountancy & Financial Professionals",
-        "Provider": "SMU Academy"
+        "Role": "Smart Factory Specialist",
+        "Skills": "Digital Twins, Predictive Maintenance, AI",
+        "Description": "Optimizing manufacturing through Industry 4.0 tech.",
+        "Course": "SCTP: Industrial Automation & Robotics",
+        "Provider": "SIMTech (A*STAR)"
+    },
+    {
+        "Role": "Digital Business Analyst",
+        "Skills": "Requirements Gathering, Agile, BPMN",
+        "Description": "Bridging business needs with IT solutions.",
+        "Course": "SCTP: Digital Business Analyst",
+        "Provider": "SIT"
+    },
+    {
+        "Role": "IT Solutioning Executive",
+        "Skills": "Technical Writing, Vendor Mgmt, Cloud Basics",
+        "Description": "Helping SMEs select the right tech tools.",
+        "Course": "SCTP: Digital Business Analyst",
+        "Provider": "SIT"
+    },
+    {
+        "Role": "Quality Assurance (QA) Analyst",
+        "Skills": "Software Testing, Selenium, Bug Tracking",
+        "Description": "Ensuring digital products are error-free.",
+        "Course": "SCTP: Digital Business Analyst",
+        "Provider": "SIT"
+    },
+    {
+        "Role": "Facilities Management Executive",
+        "Skills": "Building Maint, WSH, Vendor Mgmt",
+        "Description": "Managing commercial building operations.",
+        "Course": "SCTP: Smart & Sustainable Facility Management",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "Smart FM Specialist",
+        "Skills": "Building Management Systems (BMS), IoT",
+        "Description": "Using sensors to optimize building maintenance.",
+        "Course": "SCTP: Smart & Sustainable Facility Management",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "Environmental Control Officer",
+        "Skills": "Vector Control, Waste Mgmt, NEA Regs",
+        "Description": "Ensuring public health standards in facilities.",
+        "Course": "SCTP: Smart & Sustainable Facility Management",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "Hospitality Entrepreneur",
+        "Skills": "Business Planning, Go-to-Market, Finance",
+        "Description": "Launching a passion-driven lifestyle venture.",
+        "Course": "SCTP: Lifestyle Entrepreneurship",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "F&B Business Owner",
+        "Skills": "Menu Costing, Marketing, Operations",
+        "Description": "Setting up and managing a digital-first F&B brand.",
+        "Course": "SCTP: Lifestyle Entrepreneurship",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Digital Content Creator",
+        "Skills": "Video Editing, AI Scripting, Monetization",
+        "Description": "Building a personal brand or freelance business.",
+        "Course": "SCTP: Mastering Photography & Videography (AI-Enhanced)",
+        "Provider": "Republic Polytechnic"
+    },
+    {
+        "Role": "Commercial Photographer",
+        "Skills": "Lighting, Composition, Retouching",
+        "Description": "Shooting professional assets for brands.",
+        "Course": "SCTP: Mastering Photography & Videography (AI-Enhanced)",
+        "Provider": "Republic Polytechnic"
+    },
+    {
+        "Role": "Social Media Videographer",
+        "Skills": "Mobile Video, CapCut, Storyboarding",
+        "Description": "Producing short-form video for TikTok/Reels.",
+        "Course": "SCTP: Mastering Photography & Videography (AI-Enhanced)",
+        "Provider": "Republic Polytechnic"
+    },
+    {
+        "Role": "IT Project Coordinator",
+        "Skills": "MS Project, Resource Leveling, Communication",
+        "Description": "Assisting senior PMs in software delivery.",
+        "Course": "SCTP: Integrated Project Management",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "Construction Project Executive",
+        "Skills": "Contract Admin, Site Planning, Safety",
+        "Description": "Managing timelines for built environment projects.",
+        "Course": "SCTP: Integrated Project Management",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "Site Supervisor",
+        "Skills": "Manpower Mgmt, Technical Drawing, WSH",
+        "Description": "Overseeing daily activities at construction sites.",
+        "Course": "SCTP: Integrated Project Management",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "Quantity Surveyor (Junior)",
+        "Skills": "Cost Estimation, Tendering, Valuation",
+        "Description": "Managing project budgets and material costs.",
+        "Course": "SCTP: Integrated Project Management",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "Customer Success Manager",
+        "Skills": "Relationship Mgmt, CRM, Troubleshooting",
+        "Description": "Ensuring B2B clients get value from software.",
+        "Course": "SCTP: Strategic Customer Success",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Client Relations Executive",
+        "Skills": "Communication, Presentation, Upselling",
+        "Description": "Managing key corporate accounts.",
+        "Course": "SCTP: Strategic Customer Success",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Support Engineer",
+        "Skills": "Problem Solving, SQL, Technical Support",
+        "Description": "Resolving complex technical issues for users.",
+        "Course": "SCTP: Strategic Customer Success",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Aircraft Technician (Avionics)",
+        "Skills": "Electrical Systems, Troubleshooting, EASA",
+        "Description": "Maintaining electronic flight systems.",
+        "Course": "SCTP: Aircraft Maintenance (Avionics)",
+        "Provider": "Temasek Polytechnic"
+    },
+    {
+        "Role": "Aircraft Engine Technician",
+        "Skills": "Mechanical Repair, Engine Overhaul, Safety",
+        "Description": "Specializing in turbine and piston engines.",
+        "Course": "SCTP: Aircraft Maintenance (Engine)",
+        "Provider": "Temasek Polytechnic"
+    },
+    {
+        "Role": "Aviation Logistics Officer",
+        "Skills": "Parts Sourcing, Supply Chain, MRO",
+        "Description": "Managing spare parts for aircraft maintenance.",
+        "Course": "SCTP: Aircraft Maintenance (Engine)",
+        "Provider": "Temasek Polytechnic"
+    },
+    {
+        "Role": "Wellness Programme Manager",
+        "Skills": "Health Promotion, Mental Health, Event Mgmt",
+        "Description": "Designing corporate health initiatives.",
+        "Course": "SCTP: Wellness Professionals",
+        "Provider": "Republic Polytechnic"
+    },
+    {
+        "Role": "Fitness Business Executive",
+        "Skills": "Sales, Operations, Nutrition Basics",
+        "Description": "Managing gyms or wellness boutiques.",
+        "Course": "SCTP: Wellness Professionals",
+        "Provider": "Republic Polytechnic"
+    },
+    {
+        "Role": "Community Health Advocate",
+        "Skills": "Public Speaking, Healthcare Literacy, Outreach",
+        "Description": "Running public health awareness programs.",
+        "Course": "SCTP: Wellness Professionals",
+        "Provider": "Republic Polytechnic"
+    },
+    {
+        "Role": "App Designer",
+        "Skills": "Wireframing, Prototyping, User Flow",
+        "Description": "Creating layouts for mobile applications.",
+        "Course": "SCTP: UX/UI Design Programme",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Web Designer",
+        "Skills": "Responsive Design, CSS, Grid Systems",
+        "Description": "Designing aesthetically pleasing websites.",
+        "Course": "SCTP: UX/UI Design Programme",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Product Growth Analyst",
+        "Skills": "Data Analytics, User Research, Agile",
+        "Description": "Analyzing product usage to suggest improvements.",
+        "Course": "SCTP: Digital Product Management",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Technical Product Manager",
+        "Skills": "APIs, Cloud, Engineering Background",
+        "Description": "Managing highly technical software products.",
+        "Course": "SCTP: Digital Product Management",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Digital Transformation Consultant",
+        "Skills": "Change Mgmt, Strategy, IT Solutions",
+        "Description": "Helping firms transition to digital workflows.",
+        "Course": "SCTP: Digital Business Analyst",
+        "Provider": "SIT"
+    },
+    {
+        "Role": "AI Governance Specialist",
+        "Skills": "Ethics, AI Policy, Risk Management",
+        "Description": "Ensuring AI systems follow safety guidelines.",
+        "Course": "SCTP: Advanced Data Science & AI",
+        "Provider": "NTU PACE"
+    },
+    {
+        "Role": "Data Engineer (Junior)",
+        "Skills": "ETL, SQL, Big Data Tools",
+        "Description": "Building pipelines that clean and store data.",
+        "Course": "SCTP: Advanced Data Science & AI",
+        "Provider": "NTU PACE"
+    },
+    {
+        "Role": "Cyber Security Sales Engineer",
+        "Skills": "Sales, Network Security, Presentation",
+        "Description": "Explaining complex security tools to clients.",
+        "Course": "SCTP: Cybersecurity Defense & Digital Forensics",
+        "Provider": "SUTD Academy"
+    },
+    {
+        "Role": "Internal IT Auditor",
+        "Skills": "Compliance, GRC, Security Audits",
+        "Description": "Reviewing internal IT systems for risks.",
+        "Course": "SCTP: Cybersecurity Defense & Digital Forensics",
+        "Provider": "SUTD Academy"
+    },
+    {
+        "Role": "Sustainable Supply Chain Manager",
+        "Skills": "Green Logistics, ESG, Carbon Footprint",
+        "Description": "Reducing environmental impact of shipping.",
+        "Course": "SCTP: Sustainability & Resilience Programme",
+        "Provider": "NUS CDE"
+    },
+    {
+        "Role": "E-Commerce Operations Manager",
+        "Skills": "Shopify, SEO, Fulfillment, Analytics",
+        "Description": "Running the day-to-day of an online store.",
+        "Course": "SCTP: Bionic Digital Marketer (AI-Enhanced)",
+        "Provider": "NUS SCALE"
+    },
+    {
+        "Role": "Search Engine Optimization (SEO) Lead",
+        "Skills": "Keyword Research, Link Building, Technical SEO",
+        "Description": "Improving website visibility on Google.",
+        "Course": "SCTP: Bionic Digital Marketer (AI-Enhanced)",
+        "Provider": "NUS SCALE"
+    },
+    {
+        "Role": "Paid Search Specialist",
+        "Skills": "Google Ads, SEM, Data Analysis",
+        "Description": "Managing search engine marketing budgets.",
+        "Course": "SCTP: Bionic Digital Marketer (AI-Enhanced)",
+        "Provider": "NUS SCALE"
+    },
+    {
+        "Role": "Market Research Analyst",
+        "Skills": "Survey Design, Statistics, Consumer Insights",
+        "Description": "Studying market trends for product launches.",
+        "Course": "SCTP: Data Analytics & Business Intelligence",
+        "Provider": "SITLEARN"
+    },
+    {
+        "Role": "Personal Banker",
+        "Skills": "Financial Advisory, Sales, Regulations",
+        "Description": "Providing financial planning services to clients.",
+        "Course": "SCTP: Certificate in Personal Banking",
+        "Provider": "SUSS Academy"
+    },
+    {
+        "Role": "Relationship Manager",
+        "Skills": "Networking, Portfolio Mgmt, Communication",
+        "Description": "Managing high-net-worth individual accounts.",
+        "Course": "SCTP: Certificate in Personal Banking",
+        "Provider": "SUSS Academy"
+    },
+    {
+        "Role": "Retail Banking Associate",
+        "Skills": "Customer Service, Banking Ops, AML",
+        "Description": "Handling frontline branch banking operations.",
+        "Course": "SCTP: Certificate in Personal Banking",
+        "Provider": "SUSS Academy"
+    },
+    {
+        "Role": "Electronics Engineer",
+        "Skills": "Circuit Design, Microcontrollers, IoT",
+        "Description": "Designing hardware for smart devices.",
+        "Course": "SCTP: Certificate in Electronics",
+        "Provider": "SUSS Academy"
+    },
+    {
+        "Role": "Assistant Engineer (Hardware)",
+        "Skills": "Soldering, PCB Layout, Troubleshooting",
+        "Description": "Supporting electronics manufacturing tests.",
+        "Course": "SCTP: Certificate in Electronics",
+        "Provider": "SUSS Academy"
+    },
+    {
+        "Role": "Hardware Test Technician",
+        "Skills": "QA, Electronics Testing, Manuals",
+        "Description": "Running diagnostic tests on circuit boards.",
+        "Course": "SCTP: Certificate in Electronics",
+        "Provider": "SUSS Academy"
+    },
+    {
+        "Role": "Digital Delivery Executive",
+        "Skills": "VDC, BIM, Project Coordination",
+        "Description": "Managing digital construction workflows.",
+        "Course": "SCTP: Digital Delivery (Built Environment)",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "BIM Coordinator",
+        "Skills": "Navisworks, Clash Resolution, Revit",
+        "Description": "Coordinating between architect and engineer models.",
+        "Course": "SCTP: Digital Delivery (Built Environment)",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "Computational Design Assistant",
+        "Skills": "Grasshopper, Dynamo, Scripting",
+        "Description": "Automating complex architectural designs.",
+        "Course": "SCTP: Computational Design (Built Environment)",
+        "Provider": "BCA Academy"
+    },
+    {
+        "Role": "Building Cost Manager",
+        "Skills": "Cost Control, Tendering, Quantity Surveying",
+        "Description": "Optimizing expenditures for construction sites.",
+        "Course": "SCTP: Building Cost Management",
+        "Provider": "BCA Academy"
     }
 ]
