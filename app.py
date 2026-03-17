@@ -227,7 +227,7 @@ def get_career_advice_params(profile_text: str, top_jobs: pd.DataFrame):
         f"<candidate_profile>\n{profile_text[:800]}\n</candidate_profile>\n\n"
         f"<job_matches>\n{context}\n</job_matches>\n\n"
         "Based on the profile and job matches above, give this candidate personalised "
-        "career transition advice in 2-3 concise sentences. "
+        "career transition advice in 4-6 concise sentences. "
         "Focus on their strengths, the most relevant role, and one concrete next step."
     )
     return system_msg, user_msg
@@ -311,6 +311,36 @@ if nav == "AI Recommendation Engine":
                 results = weighted_rerank(profile_text, top_k_indices, jobs_df, cross_model)
 
             with c2:
+                # --- RAG GENERATION: stream response incrementally ---
+                st.subheader("🧠 AI Career Advisor (RAG Generated)")
+                
+                system_msg, user_msg = get_career_advice_params(profile_text, results)
+                
+                if not system_msg:
+                    st.error("⚠️ HF_TOKEN not set. Please add it to your .env file to enable AI-generated advice.")
+                else:
+                    models_to_try = [
+                        "meta-llama/Llama-3.1-8B-Instruct",
+                        "Qwen/Qwen2.5-72B-Instruct",
+                        "mistralai/Mistral-Nemo-Instruct-2407",
+                    ]
+                    
+                    success = False
+                    for model_name in models_to_try:
+                        try:
+                            client = InferenceClient(api_key=hf_token)
+                            with st.chat_message("assistant", avatar="💡"):
+                                st.write(f"*(Using {model_name.split('/')[1]})*")
+                                advice = st.write_stream(stream_llm_response(client, model_name, system_msg, user_msg))
+                            success = True
+                            break
+                        except Exception as e:
+                            continue
+                            
+                    if not success:
+                        st.error("⚠️ HF API over capacity or model unsupported.")
+                
+                st.markdown("---")
                 st.subheader("🏆 Top Matched Roles")
                 for _, row in results.iterrows():
                     with st.expander(f"⭐ {row['Role']} ({row['Score']}% Match)", expanded=True):
@@ -331,36 +361,6 @@ if nav == "AI Recommendation Engine":
                         else:
                             st.success("✅ Your profile is a strong technical match!")
 
-            # --- RAG GENERATION: stream response incrementally ---
-            st.markdown("---")
-            st.subheader("🧠 AI Career Advisor (RAG Generated)")
-            
-            system_msg, user_msg = get_career_advice_params(profile_text, results)
-            
-            if not system_msg:
-                st.error("⚠️ HF_TOKEN not set. Please add it to your .env file to enable AI-generated advice.")
-            else:
-                models_to_try = [
-                    "meta-llama/Llama-3.1-8B-Instruct",
-                    "Qwen/Qwen2.5-72B-Instruct",
-                    "mistralai/Mistral-Nemo-Instruct-2407",
-                ]
-                
-                success = False
-                for model_name in models_to_try:
-                    try:
-                        client = InferenceClient(api_key=hf_token)
-                        with st.chat_message("assistant", avatar="💡"):
-                            st.write(f"*(Using {model_name.split('/')[1]})*")
-                            advice = st.write_stream(stream_llm_response(client, model_name, system_msg, user_msg))
-                        success = True
-                        break
-                    except Exception as e:
-                        continue
-                        
-                if not success:
-                    st.error("⚠️ HF API over capacity or model unsupported.")
-            
 elif nav == "Project Description":
     st.title("🎯 AI-Driven Job Recommendation & SCTP Skill Gap Analyzer")
     st.markdown("### Use the **🛠️ Project Controls** on the left menu to navigate.")
