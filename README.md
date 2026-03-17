@@ -1,13 +1,3 @@
----
-title: FindSGJobs
-emoji: 🚀
-colorFrom: blue
-colorTo: green
-sdk: streamlit
-sdk_version: "1.31.0"
-app_file: app.py
-pinned: false
----
 # 🚀 AI-Driven Job Recommendation & SCTP Skill Gap Analyzer
 
 ## 📌 Project Overview
