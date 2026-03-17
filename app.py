@@ -119,8 +119,8 @@ def build_faiss_index(_model, _jobs_df):
     Builds a FAISS flat inner-product index over all job documents.
     Each document is a concatenation of Role + Skills + Description so that
     the index captures rich semantic content for retrieval.
-    """
-    index_path = "faiss_index.bin"
+    """ 
+    index_path = "faiss_index.idx"
     docs_path = "job_documents.json"
 
     # Check if index exists on disk
