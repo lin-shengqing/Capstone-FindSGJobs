@@ -71,6 +71,50 @@ The system uses a dynamic fallback array of open-weight LLMs hosted on Hugging F
 * **Transparency**: Clearly identifies **"Skill Gaps"** to provide users with actionable feedback rather than a simple "Yes/No" result.
 * **Industry Partner**: FindSGJobs
 
+
+---
+
+## 🌟 Project Showcase
+
+### 📸 App Infographic 
+
+---
+
+<img src="assets/Capstone-FindSGJobs.png" width="800" />
+
+---
+
+### 📊 Presentation
+To understand the architecture and business value behind this project, please view our presentation slides:
+- 📑 [View as PDF](assets/FindSGJobs_AI_Semantic_Engine.pdf)
+
+---
+
+### 🎥 Demo Video 
+
+---
+Check out this quick walkthrough of the application:
+<video src="assets/The_AI_Career_Advisor.mp4" width="800" controls="controls"></video>
+
+*(If the video doesn't load, you can [download it here](assets/app_demo.mp4))*
+
+---
+
+### 📸 App Screenshots 
+
+---
+
+
+Candidate upload their resume, the application will shows the top matched roles and a short advise by a RAG generated AI Career Advisor.
+
+<img src="assets/PDF_Input.png" width="800" />
+
+
+The application also suports manaully keying in their experience.
+
+<img src="assets/Text_Input.png" width="800" />
+---
+
 ## 🛠️ Installation (Conda Workflow)
 
 1. **Create the environment**:
