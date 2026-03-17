@@ -40,7 +40,12 @@ st.markdown("""
 # --- 2. DATA LOADERS & AI MODEL ---
 @st.cache_resource
 def load_model():
-    return SentenceTransformer('all-MiniLM-L6-v2')
+    return SentenceTransformer('BAAI/bge-small-en-v1.5')
+
+@st.cache_resource
+def load_cross_encoder():
+    from sentence_transformers import CrossEncoder
+    return CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 
 @st.cache_data
 def fetch_jobs_data():
@@ -115,6 +120,16 @@ def build_faiss_index(_model, _jobs_df):
     Each document is a concatenation of Role + Skills + Description so that
     the index captures rich semantic content for retrieval.
     """
+    index_path = "faiss_index.bin"
+    docs_path = "job_documents.json"
+
+    # Check if index exists on disk
+    if os.path.exists(index_path) and os.path.exists(docs_path):
+        index = faiss.read_index(index_path)
+        with open(docs_path, 'r') as f:
+            documents = json.load(f)
+        return index, documents
+
     documents = []
     for _, row in _jobs_df.iterrows():
         doc = f"Role: {row['Role']}. Skills: {row['Skills']}. Description: {row['Description']}"
@@ -131,45 +146,69 @@ def build_faiss_index(_model, _jobs_df):
     index = faiss.IndexFlatIP(dim)
     index.add(embeddings)
 
+    # Save to disk for future runs
+    faiss.write_index(index, index_path)
+    with open(docs_path, 'w') as f:
+        json.dump(documents, f)
+
     return index, documents
 
 
 # --- 4. RAG: WEIGHTED RE-RANKING ---
-def weighted_rerank(profile_text, top_k_indices, jobs_df, model):
+def weighted_rerank(profile_text, top_k_indices, jobs_df, cross_model):
     """
     After FAISS retrieves Top-K candidates, apply weighted re-ranking
-    on Title / Skills / Description similarities for higher precision.
+    using a dedicated Cross-Encoder for much higher accuracy.
     """
     subset_df = jobs_df.iloc[top_k_indices].copy()
-
-    user_emb = model.encode(profile_text, convert_to_tensor=True)
-
-    title_embs = model.encode(subset_df['Role'].tolist(), convert_to_tensor=True)
-    skill_embs = model.encode(subset_df['Skills'].tolist(), convert_to_tensor=True)
-    desc_embs  = model.encode(subset_df['Description'].tolist(), convert_to_tensor=True)
-
-    title_scores = util.cos_sim(user_emb, title_embs)[0]
-    skill_scores = util.cos_sim(user_emb, skill_embs)[0]
-    desc_scores  = util.cos_sim(user_emb, desc_embs)[0]
-
-    raw_scores = (title_scores * 0.5) + (skill_scores * 0.3) + (desc_scores * 0.2)
-    calibrated = [min(float(s) * 2.2, 0.98) for s in raw_scores]
-
-    subset_df['Score'] = [round(s * 100, 1) for s in calibrated]
+    
+    # Prepare pairs for the cross-encoder: (Query, Document)
+    pairs = []
+    for _, row in subset_df.iterrows():
+        doc = f"Role: {row['Role']}. Skills: {row['Skills']}. Description: {row['Description']}"
+        pairs.append([profile_text, doc])
+    
+    # Predict relevance scores
+    scores = cross_model.predict(pairs)
+    
+    # Map scores to a 0-100 percentage (sigmoid mapping roughly for uncalibrated logits if needed, 
+    # but we can just normalize or use them to rank.
+    # Let's normalize the raw logits to a 0-100 scale based on the min/max of the current batch for display
+    # (Cross-encoder logits can range broadly)
+    min_score = min(scores)
+    max_score = max(scores)
+    if max_score > min_score:
+        calibrated = [(s - min_score) / (max_score - min_score) * 100 for s in scores]
+    else:
+        calibrated = [100 for _ in scores]
+        
+    subset_df['Score'] = [round(float(s), 1) for s in calibrated]
     return subset_df.sort_values(by="Score", ascending=False).head(3)
 
 
 # --- 5. RAG: LLM GENERATION via Hugging Face Inference Providers ---
-def generate_career_advice(profile_text: str, top_jobs: pd.DataFrame) -> str:
+def stream_llm_response(client, model, system_msg, user_msg):
+    stream = client.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": system_msg},
+            {"role": "user",   "content": user_msg},
+        ],
+        max_tokens=250,
+        temperature=0.7,
+        stream=True
+    )
+    for chunk in stream:
+        if chunk.choices and chunk.choices[0].delta.content:
+            yield chunk.choices[0].delta.content
+
+def get_career_advice_params(profile_text: str, top_jobs: pd.DataFrame):
     """
     RAG - GENERATION COMPONENT:
-    Constructs a prompt from the retrieved job context and the candidate profile,
-    then calls the HF Inference Providers API (InferenceClient) to generate
-    personalised career advice. Uses auto provider selection so HF picks the
-    fastest available backend for the chosen model.
+    Builds the structured prompt for Hugging Face Inference API.
     """
     if not hf_token:
-        return "⚠️ HF_TOKEN not set. Please add it to your .env file to enable AI-generated advice."
+        return None, None, None
 
     # Build context string from retrieved documents
     context_lines = []
@@ -185,50 +224,25 @@ def generate_career_advice(profile_text: str, top_jobs: pd.DataFrame) -> str:
         "specialising in mid-career transitions. Be concise and actionable."
     )
     user_msg = (
-        f"A candidate has the following professional background:\n{profile_text[:800]}\n\n"
-        f"Based on their profile, the top matching job roles are:\n{context}\n\n"
-        "In 2-3 concise sentences, give this candidate personalised career transition advice. "
+        f"<candidate_profile>\n{profile_text[:800]}\n</candidate_profile>\n\n"
+        f"<job_matches>\n{context}\n</job_matches>\n\n"
+        "Based on the profile and job matches above, give this candidate personalised "
+        "career transition advice in 2-3 concise sentences. "
         "Focus on their strengths, the most relevant role, and one concrete next step."
     )
-
-    # Models to try — using widely supported open weights on HF free tier
-    models_to_try = [
-        "meta-llama/Llama-3.1-8B-Instruct",
-        "Qwen/Qwen2.5-72B-Instruct",
-        "mistralai/Mistral-Nemo-Instruct-2407",
-    ]
-
-    last_error = ""
-    for model in models_to_try:
-        try:
-            # Let huggingface_hub use its default inference routing
-            client = InferenceClient(api_key=hf_token)
-            completion = client.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": system_msg},
-                    {"role": "user",   "content": user_msg},
-                ],
-                max_tokens=250,
-                temperature=0.7,
-            )
-            advice = completion.choices[0].message.content.strip()
-            if advice:
-                return f"[{model.split('/')[1]}] {advice}"
-        except Exception as e:
-            last_error = str(e)
-            continue
-
-    return f"⚠️ HF API over capacity or model unsupported. Last error: {last_error}"
-
+    return system_msg, user_msg
 
 # --- 6. INITIALIZATION ---
 with st.sidebar:
     st.title("⚙️ System Status")
     with st.status("Initializing RAG Pipeline...", expanded=False) as status:
-        st.write("Loading Sentence Transformer Model...")
+        st.write("Loading Bi-Encoder Model...")
         model = load_model()
-        st.write('Model "all-MiniLM-L6-v2" Loaded ✅')
+        st.write('Model "BAAI/bge-small-en-v1.5" Loaded ✅')
+        
+        st.write("Loading Cross-Encoder Model...")
+        cross_model = load_cross_encoder()
+        st.write('Cross-Encoder loaded ✅')
 
         st.write("Loading job data...")
         jobs_df, is_live, api_error, api_count, seed_count = fetch_jobs_data()
@@ -242,9 +256,9 @@ with st.sidebar:
 
     with st.expander("📊 Data Breakdown", expanded=False):
         st.write(f"**Total Roles in Index:** {len(jobs_df)}")
-        st.write(f"**Vector Dimensions:** 384 (MiniLM)")
+        st.write(f"**Vector Dimensions:** 384 (BGE-Small)")
         st.write(f"**Index Type:** FAISS Flat Inner-Product")
-        st.write(f"**LLM:** Mistral-7B-Instruct (HF API)")
+        st.write(f"**LLM:** Llama-3.1-8B-Instruct (HF API)")
 
     if not hf_token:
         st.warning("HF_TOKEN missing. LLM-generated advice will be disabled.")
@@ -267,10 +281,9 @@ if nav == "AI Recommendation Engine":
         run_btn = st.button("Analyze My Career Profile")
 
         st.markdown("### Example job experience:")
-        st.markdown(""" I am a highly motivated professional looking to transition into Data Science and AI.  
-                    I have 13 years of experience in software development, Site Reliability Engineering.  
-                    I am proficient in ASP.NET Microsoft SQL and have recently completed a basic course in Python and Machine Learning.  
-                    I am also interested in Big Data and Machine Learning. """)
+        st.markdown(""" I am a highly motivated professional looking to transition into Data Science and Artificial Intelligence.  
+                    I have experience in software development, Site Reliability Engineering.  
+                    I am proficient in ASP.NET Microsoft SQL, Azure Cloud VM. """)
 
     if run_btn:
         profile_text = ""
@@ -295,7 +308,7 @@ if nav == "AI Recommendation Engine":
                 top_k_indices = indices[0].tolist()
 
                 # --- WEIGHTED RE-RANKING on the retrieved subset ---
-                results = weighted_rerank(profile_text, top_k_indices, jobs_df, model)
+                results = weighted_rerank(profile_text, top_k_indices, jobs_df, cross_model)
 
             with c2:
                 st.subheader("🏆 Top Matched Roles")
@@ -318,32 +331,51 @@ if nav == "AI Recommendation Engine":
                         else:
                             st.success("✅ Your profile is a strong technical match!")
 
-            # --- RAG GENERATION: call Mistral-7B for personalised advice ---
-            with st.spinner("🤖 Step 2/2 — RAG Generation: Mistral-7B crafting personalised advice..."):
-                advice = generate_career_advice(profile_text, results)
-
+            # --- RAG GENERATION: stream response incrementally ---
             st.markdown("---")
             st.subheader("🧠 AI Career Advisor (RAG Generated)")
-            st.markdown(
-                f'<div class="rag-advice-box">💬 {advice}</div>',
-                unsafe_allow_html=True
-            )
-
+            
+            system_msg, user_msg = get_career_advice_params(profile_text, results)
+            
+            if not system_msg:
+                st.error("⚠️ HF_TOKEN not set. Please add it to your .env file to enable AI-generated advice.")
+            else:
+                models_to_try = [
+                    "meta-llama/Llama-3.1-8B-Instruct",
+                    "Qwen/Qwen2.5-72B-Instruct",
+                    "mistralai/Mistral-Nemo-Instruct-2407",
+                ]
+                
+                success = False
+                for model_name in models_to_try:
+                    try:
+                        client = InferenceClient(api_key=hf_token)
+                        with st.chat_message("assistant", avatar="💡"):
+                            st.write(f"*(Using {model_name.split('/')[1]})*")
+                            advice = st.write_stream(stream_llm_response(client, model_name, system_msg, user_msg))
+                        success = True
+                        break
+                    except Exception as e:
+                        continue
+                        
+                if not success:
+                    st.error("⚠️ HF API over capacity or model unsupported.")
+            
 elif nav == "Project Description":
     st.title("🎯 AI-Driven Job Recommendation & SCTP Skill Gap Analyzer")
     st.markdown("### Use the **🛠️ Project Controls** on the left menu to navigate.")
 
     col1, col2 = st.columns(2)
     with col1:
+        st.title("RAG Pipeline Architecture")
         st.markdown("""
-        **RAG Pipeline Architecture:**
-        * **Ingestion:** Curated seed catalog embedded into a FAISS vector index at startup.
-        * **Retrieval:** Candidate profile encoded & searched against FAISS index (Top-K retrieval).
-        * **Re-Ranking:** Weighted cosine similarity (Title 50% · Skills 30% · Desc 20%).
+        * **Ingestion:** Curated seed catalog embedded into a persistent FAISS index on disk using `BAAI/bge-small-en-v1.5`.
+        * **Retrieval:** Candidate profile encoded & searched against FAISS index (Top 15 broad retrieval).
+        * **Re-Ranking:** Dedicated Cross-Encoder (`ms-marco-MiniLM-L-6-v2`) deeply evaluates candidate profile vs job documentation to yield highly accurate Top 3 results.
         """)
         st.markdown("""
         **LLM Generation Layer (AI Career Advisor):**
-        * A prompt is constructed from the retrieved data and sent to the **Hugging Face Inference API**.
+        * A structured XML prompt (`<candidate_profile>`, `<job_matches>`) is constructed and sent to the **Hugging Face Inference API** to stream advice incrementally.
         * To ensure stability, the system uses a dynamic fallback array of top open-weight models:
             1. **`Llama-3.1-8B-Instruct`** (Primary) - Fast & highly capable.
             2. **`Qwen2.5-72B-Instruct`** (Fallback 1) - Massive, GPT-4 level reasoning.
