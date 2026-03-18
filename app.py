@@ -354,11 +354,18 @@ if nav == "AI Recommendation Engine":
                 for _, row in results.iterrows():
                     with st.expander(f"⭐ {row['Role']} ({row['Score']}% Match)", expanded=True):
                         fig = go.Figure(go.Indicator(
-                            mode="gauge+number",
+                            mode="gauge",
                             value=row['Score'],
-                            number={'font': {'size': 48}},
                             gauge={'axis': {'range': [0, 100]}, 'bar': {'color': "#1f77b4"}}
                         ))
+                        fig.add_annotation(
+                            x=0.5, y=0,
+                            xref="paper", yref="paper",
+                            xanchor="center", yanchor="bottom",
+                            text=str(row['Score']),
+                            font=dict(size=48),
+                            showarrow=False
+                        )
                         fig.update_layout(height=180, margin=dict(l=20, r=20, t=30, b=20), autosize=True)
                         st.plotly_chart(fig, use_container_width=True)
 
