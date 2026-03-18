@@ -219,7 +219,6 @@ def get_career_advice_params(profile_text: str, top_jobs: pd.DataFrame):
     if not hf_token:
         return None, None, None
 
-    # Build context string from retrieved documents
     context_lines = []
     for _, row in top_jobs.iterrows():
         context_lines.append(
@@ -230,8 +229,12 @@ def get_career_advice_params(profile_text: str, top_jobs: pd.DataFrame):
 
     system_msg = (
         "You are a helpful and encouraging career advisor in Singapore "
-        "specialising in mid-career transitions. Be concise and actionable."
+        "specialising in mid-career transitions. Be concise and actionable. "
+        "CRITICAL: If the provided profile is NOT a professional resume or career query "
+        "(e.g., it describes illegal acts, crimes, or unrelated hobbies), you MUST "
+        "ignore the matches and politely explain that you only provide career assistance."
     )
+    
     user_msg = (
         f"<candidate_profile>\n{profile_text[:800]}\n</candidate_profile>\n\n"
         f"<job_matches>\n{context}\n</job_matches>\n\n"
@@ -240,6 +243,34 @@ def get_career_advice_params(profile_text: str, top_jobs: pd.DataFrame):
         "Focus on their strengths, the most relevant role, and one concrete next step."
     )
     return system_msg, user_msg
+
+def is_valid_career_query(client, profile_text):
+    gatekeeper_prompt = f"""
+    You are a professional content filter for a Singapore Career Tool. 
+    Classify the input into 'APPROVED' or 'REJECTED'.
+
+    'APPROVED': Resume content, job experience, or career questions (e.g., "I am a designer, what jobs for me?").
+    'REJECTED': Illegal acts, violence, banking crimes, cooking, or general trivia.
+
+    Input: "{profile_text[:300]}"
+    
+    Result (Answer only 1 word - APPROVED or REJECTED):"""
+
+    try:
+        response = client.chat.completions.create(
+            model="meta-llama/Llama-3.1-8B-Instruct",
+            messages=[
+                {"role": "system", "content": "You are a strict classifier. Respond with only one word: APPROVED or REJECTED."},
+                {"role": "user", "content": gatekeeper_prompt}
+            ],
+            max_tokens=5,
+            temperature=0
+        )
+        decision = response.choices[0].message.content.strip().upper()
+        # Exact matching logic to prevent "VALID" in "INVALID" style errors
+        return "APPROVED" in decision and "REJECTED" not in decision
+    except Exception:
+        return True
 
 # --- 6. INITIALIZATION ---
 with st.sidebar:
@@ -307,76 +338,82 @@ if nav == "AI Recommendation Engine":
             profile_text = user_input
 
         if profile_text:
-            with st.spinner("🔍 Step 1/2 — RAG Retrieval: searching FAISS index..."):
-                # --- RAG RETRIEVAL: encode query and search FAISS ---
-                query_emb = model.encode([profile_text], convert_to_numpy=True)
-                faiss.normalize_L2(query_emb)
+            # Check intent first
+            client = InferenceClient(api_key=hf_token)
+            if not is_valid_career_query(client, profile_text):
+                with c2:
+                    st.error("🚫 **Out of Scope:** This tool is strictly for professional career inquiries. Please provide a resume or job-related question.")
+            else:
+                with st.spinner("🔍 Step 1/2 — RAG Retrieval: searching FAISS index..."):
+                    # --- RAG RETRIEVAL: encode query and search FAISS ---
+                    query_emb = model.encode([profile_text], convert_to_numpy=True)
+                    faiss.normalize_L2(query_emb)
 
-                TOP_K = 15  # retrieve wider pool, then re-rank
-                distances, indices = faiss_index.search(query_emb, TOP_K)
-                top_k_indices = indices[0].tolist()
+                    TOP_K = 15  # retrieve wider pool, then re-rank
+                    distances, indices = faiss_index.search(query_emb, TOP_K)
+                    top_k_indices = indices[0].tolist()
 
-                # --- WEIGHTED RE-RANKING on the retrieved subset ---
-                results = weighted_rerank(profile_text, top_k_indices, jobs_df, cross_model)
+                    # --- WEIGHTED RE-RANKING on the retrieved subset ---
+                    results = weighted_rerank(profile_text, top_k_indices, jobs_df, cross_model)
 
-            with c2:
-                # --- RAG GENERATION: stream response incrementally ---
-                st.subheader("🧠 AI Career Advisor (RAG Generated)")
-                
-                system_msg, user_msg = get_career_advice_params(profile_text, results)
-                
-                if not system_msg:
-                    st.error("⚠️ HF_TOKEN not set. Please add it to your .env file to enable AI-generated advice.")
-                else:
-                    models_to_try = [
-                        "meta-llama/Llama-3.1-8B-Instruct",
-                        "Qwen/Qwen2.5-72B-Instruct",
-                        "mistralai/Mistral-Nemo-Instruct-2407",
-                    ]
+                with c2:
+                    # --- RAG GENERATION: stream response incrementally ---
+                    st.subheader("🧠 AI Career Advisor (RAG Generated)")
                     
-                    success = False
-                    for model_name in models_to_try:
-                        try:
-                            client = InferenceClient(api_key=hf_token)
-                            with st.chat_message("assistant", avatar="💡"):
-                                st.write(f"*(Using {model_name.split('/')[1]})*")
-                                advice = st.write_stream(stream_llm_response(client, model_name, system_msg, user_msg))
-                            success = True
-                            break
-                        except Exception as e:
-                            continue
-                            
-                    if not success:
-                        st.error("⚠️ HF API over capacity or model unsupported.")
-                
-                st.markdown("---")
-                st.subheader("🏆 Top Matched Roles")
-                for _, row in results.iterrows():
-                    with st.expander(f"⭐ {row['Role']} ({row['Score']}% Match)", expanded=True):
-                        fig = go.Figure(go.Indicator(
-                            mode="gauge",
-                            value=row['Score'],
-                            gauge={'axis': {'range': [0, 100]}, 'bar': {'color': "#1f77b4"}}
-                        ))
-                        fig.add_annotation(
-                            x=0.5, y=0,
-                            xref="paper", yref="paper",
-                            xanchor="center", yanchor="bottom",
-                            text=str(row['Score']),
-                            font=dict(size=48),
-                            showarrow=False
-                        )
-                        fig.update_layout(height=180, margin=dict(l=20, r=20, t=30, b=20), autosize=True)
-                        st.plotly_chart(fig, use_container_width=True)
+                    system_msg, user_msg = get_career_advice_params(profile_text, results)
+                    
+                    if not system_msg:
+                        st.error("⚠️ HF_TOKEN not set. Please add it to your .env file to enable AI-generated advice.")
+                    else:
+                        models_to_try = [
+                            "meta-llama/Llama-3.1-8B-Instruct",
+                            "Qwen/Qwen2.5-72B-Instruct",
+                            "mistralai/Mistral-Nemo-Instruct-2407",
+                        ]
+                        
+                        success = False
+                        for model_name in models_to_try:
+                            try:
+                                client = InferenceClient(api_key=hf_token)
+                                with st.chat_message("assistant", avatar="💡"):
+                                    st.write(f"*(Using {model_name.split('/')[1]})*")
+                                    advice = st.write_stream(stream_llm_response(client, model_name, system_msg, user_msg))
+                                success = True
+                                break
+                            except Exception as e:
+                                continue
+                                
+                        if not success:
+                            st.error("⚠️ HF API over capacity or model unsupported.")
+                    
+                    st.markdown("---")
+                    st.subheader("🏆 Top Matched Roles")
+                    for _, row in results.iterrows():
+                        with st.expander(f"⭐ {row['Role']} ({row['Score']}% Match)", expanded=True):
+                            fig = go.Figure(go.Indicator(
+                                mode="gauge",
+                                value=row['Score'],
+                                gauge={'axis': {'range': [0, 100]}, 'bar': {'color': "#1f77b4"}}
+                            ))
+                            fig.add_annotation(
+                                x=0.5, y=0,
+                                xref="paper", yref="paper",
+                                xanchor="center", yanchor="bottom",
+                                text=str(row['Score']),
+                                font=dict(size=48),
+                                showarrow=False
+                            )
+                            fig.update_layout(height=180, margin=dict(l=20, r=20, t=30, b=20), autosize=True)
+                            st.plotly_chart(fig, use_container_width=True)
 
-                        req_skills = [s.strip().lower() for s in str(row['Skills']).split(",")]
-                        missing = [s.upper() for s in req_skills if s not in profile_text.lower() and len(s) > 2]
+                            req_skills = [s.strip().lower() for s in str(row['Skills']).split(",")]
+                            missing = [s.upper() for s in req_skills if s not in profile_text.lower() and len(s) > 2]
 
-                        if missing[:3]:
-                            st.error(f"**Skill Gaps:** {', '.join(missing[:3])}")
-                            st.success(f"**Upskilling Pathway:** {row['Course']} @ {row['Provider']}")
-                        else:
-                            st.success("✅ Your profile is a strong technical match!")
+                            if missing[:3]:
+                                st.error(f"**Skill Gaps:** {', '.join(missing[:3])}")
+                                st.success(f"**Upskilling Pathway:** {row['Course']} @ {row['Provider']}")
+                            else:
+                                st.success("✅ Your profile is a strong technical match!")
 
 elif nav == "Project Description":
     st.title("🎯 AI-Driven Job Recommendation & SCTP Skill Gap Analyzer")
