@@ -19,20 +19,29 @@ if hf_token:
     os.environ["HF_TOKEN"] = hf_token
 
 # --- 1. CONFIG & STYLING ---
-st.set_page_config(page_title="FindSGJobs AI: SCTP Prototype", layout="wide")
+st.set_page_config(page_title="FindSGJobs AI: SCTP Prototype", layout="wide", initial_sidebar_state="auto")
 
 st.markdown("""
     <style>
-    .main { background-color: #f8f9fa; }
-    .stMetric { background-color: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #eee; }
+    .stMetric { background-color: var(--secondary-background-color); padding: 20px; border-radius: 12px; border: 1px solid var(--faded-text-color, #eee); }
     .rag-advice-box {
-        background: linear-gradient(135deg, #e8f4f8, #d6eaf8);
+        background-color: var(--secondary-background-color);
         border-left: 4px solid #2980b9;
         padding: 16px 20px;
         border-radius: 8px;
         margin-top: 12px;
         font-size: 0.97rem;
         line-height: 1.6;
+    }
+    
+    /* Force 2-column layout to stack below 1024px on desktop browsers for responsiveness */
+    @media (max-width: 1024px) {
+        .stColumn {
+            width: 100% !important;
+            flex-basis: 100% !important;
+            min-width: 100% !important;
+            margin-bottom: 20px;
+        }
     }
     </style>
 """, unsafe_allow_html=True)
@@ -347,9 +356,10 @@ if nav == "AI Recommendation Engine":
                         fig = go.Figure(go.Indicator(
                             mode="gauge+number",
                             value=row['Score'],
+                            number={'font': {'size': 48}},
                             gauge={'axis': {'range': [0, 100]}, 'bar': {'color': "#1f77b4"}}
                         ))
-                        fig.update_layout(height=180, margin=dict(l=10, r=10, t=10, b=10))
+                        fig.update_layout(height=180, margin=dict(l=20, r=20, t=30, b=20), autosize=True)
                         st.plotly_chart(fig, use_container_width=True)
 
                         req_skills = [s.strip().lower() for s in str(row['Skills']).split(",")]
