@@ -25,7 +25,6 @@ Singaporean job seekers, especially mid-career professionals, often face:
 ---
 
 ## 🧠 Technical Methodology (RAG Pipeline)
-
 The system operates as a full **Retrieval-Augmented Generation (RAG)** pipeline, moving beyond simple keyword matching to provide semantic understanding and personalized AI generation.
 
 ### 1. Vector Store & Semantic Retrieval
@@ -54,8 +53,7 @@ The system uses a dynamic fallback array of open-weight LLMs hosted on Hugging F
 
 ---
 
-### 📁 File Structure
-
+## 📁 File Structure
 * **app.py**: Core application logic, RAG pipeline, FAISS indexing, and Streamlit UI.
 * **roles.json**: Curated database of 100 diverse job roles and requirements.
 * **sctp_courses.json**: Mapping of job categories to actual SCTP course providers (NTU, SUTD, SIT, etc.).
@@ -63,9 +61,7 @@ The system uses a dynamic fallback array of open-weight LLMs hosted on Hugging F
 
 ---
 
-### 🛡️ Ethics & Data Privacy
-
----
+## 🛡️ Ethics & Data Privacy
 
 * **PDPA Aligned**: All resume processing is done in-memory. No personal data or uploaded PDFs are stored permanently.
 * **Bias Reduction**: Matching is purely mathematical (vector-based), ignoring demographic indicators such as age, gender, or race.
@@ -78,9 +74,6 @@ The system uses a dynamic fallback array of open-weight LLMs hosted on Hugging F
 ## 🌟 Project Showcase
 
 ### 📸 App Infographic 
-
----
-
 <img src="assets/Capstone-FindSGJobs.png" width="800" />
 
 ---
@@ -93,7 +86,6 @@ To understand the architecture and business value behind this project, please vi
 
 ### 🎥 Demo Video 
 
----
 Check out this quick walkthrough of the application:
 <video src="assets/The_AI_Career_Advisor.mp4" width="800" controls="controls"></video>
 
@@ -101,19 +93,24 @@ Check out this quick walkthrough of the application:
 
 ---
 
-### 📸 App Screenshots 
+### 🌟 App Demo Link
+
+Check Out the app via this link (https://huggingface.co/spaces/linshengqing/Capstone-FindSGJobs)
 
 ---
 
+### 📸 App Screenshots 
 
-Candidate upload their resume, the application will shows the top matched roles and a short advise by a RAG generated AI Career Advisor.
+Candidate upload their resume PDF file, the app will shows the top matched roles and a short advise by a RAG generated AI Career Advisor.
 
 <img src="assets/PDF_Input.png" width="800" />
 
+---
 
-The application also suports manaully keying in their experience.
+The app also suports manaully keying in their experience.
 
 <img src="assets/Text_Input.png" width="800" />
+
 ---
 
 ## 🛠️ Installation (Conda Workflow)
@@ -127,8 +124,6 @@ The application also suports manaully keying in their experience.
 3. **Add .env file for Hugging Face HF_TOKEN**:
    ```bash
     HF_TOKEN=hf_your_actual_token_here
-For Render, add HF_TOKEN in Add Environment Variable
-
 4. **Run the streamlit app**:
    ```bash
    streamlit run app.py
