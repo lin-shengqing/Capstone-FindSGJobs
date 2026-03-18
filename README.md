@@ -113,6 +113,12 @@ The app also suports manaully keying in their experience.
 
 ---
 
+Guardrails to prevent the app from generating irrelevant responses.
+
+<img src="assets/Guardrails.png" width="800" />
+
+---
+
 ## 🛠️ Installation (Conda Workflow)
 
 1. **Create the environment**:
