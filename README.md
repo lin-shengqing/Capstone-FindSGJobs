@@ -97,7 +97,7 @@ To understand the architecture and business value behind this project, please vi
 Check out this quick walkthrough of the application:
 <video src="assets/The_AI_Career_Advisor.mp4" width="800" controls="controls"></video>
 
-*(If the video doesn't load, you can [download it here](assets/app_demo.mp4))*
+*(If the video doesn't load, you can [download it here](assets/The_AI_Career_Advisor.mp4))*
 
 ---
 
