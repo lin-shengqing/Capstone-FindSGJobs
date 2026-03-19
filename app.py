@@ -324,6 +324,8 @@ if nav == "AI Recommendation Engine":
         st.markdown(""" I am a highly motivated professional looking to transition into Data Science and Artificial Intelligence.  
                     I have experience in software development, Site Reliability Engineering.  
                     I am proficient in ASP.NET Microsoft SQL, Azure Cloud VM. """)
+        st.markdown(""" I am a highly motivated professional looking to transition into Personal Banker role. 
+                        I have 3 years experience in Marketing and Sales. """)
 
     if run_btn:
         profile_text = ""
@@ -421,27 +423,6 @@ elif nav == "Project Description":
 
     col1, col2 = st.columns(2)
     with col1:
-        st.title("RAG Pipeline Architecture")
-        st.markdown("""
-        * **Ingestion:** Curated seed catalog embedded into a persistent FAISS index on disk using `BAAI/bge-small-en-v1.5`.
-        * **Retrieval:** Candidate profile encoded & searched against FAISS index (Top 15 broad retrieval).
-        * **Re-Ranking:** Dedicated Cross-Encoder (`ms-marco-MiniLM-L-6-v2`) deeply evaluates candidate profile vs job documentation to yield highly accurate Top 3 results.
-        """)
-        st.markdown("""
-        **LLM Generation Layer (AI Career Advisor):**
-        * A structured XML prompt (`<candidate_profile>`, `<job_matches>`) is constructed and sent to the **Hugging Face Inference API** to stream advice incrementally.
-        * To ensure stability, the system uses a dynamic fallback array of top open-weight models:
-            1. **`Llama-3.1-8B-Instruct`** (Primary) - Fast & highly capable.
-            2. **`Qwen2.5-72B-Instruct`** (Fallback 1) - Massive, GPT-4 level reasoning.
-            3. **`Mistral-Nemo-Instruct-2407`** (Fallback 2) - Highly efficient 12B model.
-        """)
-        st.title("🛡️ Implementation & Data Ethics")
-        st.markdown("""
-        * **Transparency:** Skill gap reporting provides actionable feedback.
-        * **Privacy:** Vectorised matching ensures PII is never stored.
-        * **PDPA Aligned:** Resume processed in-memory only.
-        * **Bias Reduction:** Mathematical (vector-based) matching only.
-        """)
         st.title("Description")
         st.markdown("""An SCTP participant might struggle to find a job due to **skill gaps** and **insufficient relevant experience**, high competition for roles, or a mismatch between their qualifications and employer needs.
 
