@@ -42,7 +42,10 @@ Raw semantic similarity coefficients typically fall between 0.3 and 0.5. The app
 Once the top matches and skill gaps are identified, the system constructs a context-rich prompt formatted with XML tags (`<candidate_profile>`, `<job_matches>`) for better instruction adherence. It then calls the **Hugging Face Inference Providers API** (`huggingface_hub`) to stream personalized, actionable career transition advice directly to the UI in real-time.
 
 **Model Selection:**
-The system uses a dynamic fallback array of open-weight LLMs hosted on Hugging Face's free Serverless Inference API to ensure stability and high reasoning quality:
+The system uses a dynamic fallback array of open-weight LLMs hosted on Hugging Face's free Serverless Inference API to ensure stability and high reasoning quality.
+
+**System Resilience & Fallback Logic**
+Unlike standard RAG apps that rely on a single point of failure, this engine implements a Tiered Inference Strategy. If the primary model (Llama-3.1) is rate-limited or unavailable, the system automatically cascades through backup high-reasoning models:
 1. **`meta-llama/Llama-3.1-8B-Instruct`** (Primary): Highly capable, fast, and excellent at following complex system prompts.
 2. **`Qwen/Qwen2.5-72B-Instruct`** (Fallback 1): A massive, exceptionally powerful model that rivals proprietary models in reasoning.
 3. **`mistralai/Mistral-Nemo-Instruct-2407`** (Fallback 2): A highly efficient 12B parameter model built jointly by Mistral and Nvidia.
@@ -63,11 +66,32 @@ The system uses a dynamic fallback array of open-weight LLMs hosted on Hugging F
 
 ## 🛡️ Ethics & Data Privacy
 
+* **Intent Guardrails**: The system utilizes a **"Semantic Gatekeeper"** prompt. If a user provides input unrelated to career history or job seeking, the LLM is instructed to politely decline, preventing the tool from being used as a general-purpose chatbot.
 * **PDPA Aligned**: All resume processing is done in-memory. No personal data or uploaded PDFs are stored permanently.
 * **Bias Reduction**: Matching is purely mathematical (vector-based), ignoring demographic indicators such as age, gender, or race.
 * **Transparency**: Clearly identifies **"Skill Gaps"** to provide users with actionable feedback rather than a simple "Yes/No" result.
 * **Industry Partner**: FindSGJobs
 
+---
+
+## 🚀 Future Roadmap
+
+To evolve **My AI Career Advisor** from a functional capstone prototype into a production-ready ecosystem for the Singapore job market, the following development phases are planned:
+
+### 🔹 Phase 1: Data & Intelligence Scaling (Short-term)
+* **Live Job Feed Integration**: Transition from a static `roles.json` to real-time API integrations with platforms like **MyCareersFuture** or **LinkedIn** to ensure recommendations reflect current market demand.
+* **Agentic Search Capabilities**: Implement an **AI Agent** (using LangGraph) to autonomously browse the web for the latest SCTP course intake dates and seat availability, providing real-time enrollment guidance.
+* **Multilingual Support**: Enhance the RAG pipeline to process resumes and provide advice in multiple languages, supporting Singapore’s diverse workforce.
+
+### 🔹 Phase 2: Personalized Career Tooling (Mid-term)
+* **AI Resume Tailor**: A generative module that doesn't just identify gaps but suggests specific "Action Verbs" and phrasing to help candidates better highlight transferable skills for a target role.
+* **AI Interview Simulator**: A voice-enabled mock interview module that generates questions based on the specific job requirements identified during the matching phase.
+* **Salary Benchmarking**: Integration with **MOM/NTUC salary datasets** to provide users with realistic expected salary ranges for their suggested career transitions.
+
+### 🔹 Phase 3: Ecosystem & Infrastructure (Long-term)
+* **Production Vector Database**: Migrate from a local FAISS index to a managed cloud vector database (e.g., **Pinecone** or **Weaviate**) to support high-concurrency and global scaling.
+* **Direct SCTP Enrollment**: Establish API handshakes with training providers (NTU, SIT, SUTD) to allow users to "Express Interest" or begin the enrollment process directly from the app interface.
+* **User Profiles & Progress Tracking**: Implement a secure authentication layer so users can save their "Skill Gap" history and see their match percentages increase as they complete recommended SCTP modules.
 
 ---
 
