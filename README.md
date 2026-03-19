@@ -98,22 +98,22 @@ To evolve **My AI Career Advisor** from a functional capstone prototype into a p
 ## 🌟 Project Showcase
 
 ### 📸 App Infographic 
-<img src="assets/Capstone-FindSGJobs.png" width="800" />
+<img src="assets/My_AI_Career_Advisor_Infographic.png" width="800" />
 
 ---
 
 ### 📊 Presentation
-To understand the architecture and business value behind this project, please view our presentation slides:
-- 📑 [View as PDF](assets/FindSGJobs_AI_Semantic_Engine.pdf)
+To understand the architecture and business value behind this project, please view the presentation slides:
+- 📑 [View as PDF](assets/My_AI_Career_Advisor_Slide.pdf)
 
 ---
 
 ### 🎥 Demo Video 
 
 Check out this quick walkthrough of the application:
-<video src="assets/The_AI_Career_Advisor.mp4" width="800" controls="controls"></video>
+<video src="assets/My_AI_Career_Advisor_Video.mp4" width="800" controls="controls"></video>
 
-*(If the video doesn't load, you can [download it here](assets/The_AI_Career_Advisor.mp4))*
+*(If the video doesn't load, you can [download it here](assets/My_AI_Career_Advisor_Video.mp4))*
 
 ---
 
